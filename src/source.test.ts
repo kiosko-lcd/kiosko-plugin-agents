@@ -26,7 +26,7 @@ function dirWith(records: object[]): string {
 }
 
 test('resolveDir: expands ~ and falls back to the protocol default', () => {
-  assert.equal(resolveDir('~/.aimonitor/sessions', '/home/u'), '/home/u/.aimonitor/sessions');
+  assert.equal(resolveDir('~/.aimonitor/sessions', '/home/u'), join('/home/u', '.aimonitor/sessions'));
   assert.equal(resolveDir('~', '/home/u'), '/home/u');
   assert.equal(resolveDir('/srv/sessions', '/home/u'), '/srv/sessions');
   assert.ok(resolveDir('  ').length > 0);
