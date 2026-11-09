@@ -5,7 +5,7 @@
  * body; here everything scales from that reference to the box it gets.
  */
 import { STATE_PRIORITY, claims } from '@loksly/agent-sessions';
-import type { Graphics, Localized, RenderContext, ThemeColors } from '@tessera/sdk';
+import type { Graphics, Localized, RenderContext, ThemeColors } from '@kiosko/sdk';
 import { clock, countdown, elapsed, shortId } from './format.ts';
 import { plan, usedWidth, type Tile } from './select.ts';
 import { STATE_LABEL, TEXT, fill } from './texts.ts';

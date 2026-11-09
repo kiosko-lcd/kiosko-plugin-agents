@@ -2,7 +2,7 @@
  * User-facing words of the agents widgets. Kept together so a new language
  * is one file.
  */
-import type { Localized } from '@tessera/sdk';
+import type { Localized } from '@kiosko/sdk';
 import type { SessionState } from './types.ts';
 
 /**

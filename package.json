@@ -1,24 +1,24 @@
 {
-  "name": "tessera-plugin-agents",
+  "name": "kiosko-plugin-agents",
   "version": "0.1.0",
   "description": "AI coding agents on the panel: session tiles that light up when one needs you, a summary strip and an 8-bit runner interlude.",
   "type": "module",
   "license": "MIT",
   "author": "Loksly",
   "keywords": [
-    "tessera",
-    "tessera-plugin",
+    "kiosko",
+    "kiosko-plugin",
     "lcd",
     "widgets",
     "agents"
   ],
-  "homepage": "https://github.com/Loksly/tessera-plugin-agents#readme",
+  "homepage": "https://github.com/kiosko-lcd/kiosko-plugin-agents#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Loksly/tessera-plugin-agents.git"
+    "url": "git+https://github.com/kiosko-lcd/kiosko-plugin-agents.git"
   },
   "bugs": {
-    "url": "https://github.com/Loksly/tessera-plugin-agents/issues"
+    "url": "https://github.com/kiosko-lcd/kiosko-plugin-agents/issues"
   },
   "exports": {
     ".": {
@@ -26,7 +26,7 @@
       "default": "./dist/index.js"
     }
   },
-  "tessera": {
+  "kiosko": {
     "plugin": "./dist/index.js",
     "id": "agents"
   },
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@loksly/agent-sessions": "^0.1.0",
-    "@tessera/sdk": "^0.1.0",
+    "@kiosko/sdk": "^0.1.0",
     "@types/node": "^24.0.0",
     "esbuild": "^0.25.0",
     "typescript": "^5.9.3"

@@ -14,7 +14,7 @@
  * tiles of 66 px tall (462 px); other panels scale it uniformly and see a
  * wider or narrower stretch of the level.
  */
-import type { Graphics } from '@tessera/sdk';
+import type { Graphics } from '@kiosko/sdk';
 
 /** Tile side, in world pixels. 7 rows of 66 = 462, the panel's exact height. */
 const T = 66;
@@ -411,7 +411,7 @@ export interface RunnerTexts {
   level?: string;
 }
 
-export const DEFAULT_TEXTS: RunnerTexts = { title: 'TESSERA', world: 'RELEASE', time: 'TIME', retry: 'TRY AGAIN', level: 'V1.0' };
+export const DEFAULT_TEXTS: RunnerTexts = { title: 'KIOSKO', world: 'RELEASE', time: 'TIME', retry: 'TRY AGAIN', level: 'V1.0' };
 
 /** A release number per seed: "V3.7". */
 export function levelFor(seed: number): string {

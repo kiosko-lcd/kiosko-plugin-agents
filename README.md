@@ -1,24 +1,24 @@
-# tessera-plugin-agents
+# kiosko-plugin-agents
 
 Claude Code and Gemini CLI sessions at a glance: who waits for you, for how long, and git status. Ported from aimonitor.
 
-A plugin for [Tessera](https://github.com/Loksly/tessera), the widget mosaic for small USB LCD panels.
+A plugin for [Kiosko](https://github.com/kiosko-lcd/kiosko), the widget mosaic for small USB LCD panels.
 
 ![Agent sessions](docs/sessions.png)
 
 ## Install
 
-In Tessera, **Plugins → Install from npm** → `tessera-plugin-agents`, then restart Tessera. Or from a terminal:
+In Kiosko, **Plugins → Install from npm** → `kiosko-plugin-agents`, then restart Kiosko. Or from a terminal:
 
 ```sh
-npm install --prefix ~/.config/tessera/plugins tessera-plugin-agents
+npm install --prefix ~/.config/kiosko/plugins kiosko-plugin-agents
 ```
 
-(macOS: `~/Library/Application Support/Tessera/plugins`, Windows: `%APPDATA%\Tessera\plugins`.)
+(macOS: `~/Library/Application Support/Kiosko/plugins`, Windows: `%APPDATA%\Kiosko\plugins`.)
 
 ## Requirements
 
-- A hook that writes agent session files. With Claude Code, add `agent-sessions-hook` (from [`@loksly/agent-sessions`](https://github.com/Loksly/tessera/tree/main/packages/agent-sessions)) to your `settings.json` hooks; sessions land in `~/.aimonitor/sessions` by default.
+- A hook that writes agent session files. With Claude Code, add `agent-sessions-hook` (from [`@loksly/agent-sessions`](https://github.com/kiosko-lcd/kiosko/tree/main/packages/agent-sessions)) to your `settings.json` hooks; sessions land in `~/.aimonitor/sessions` by default.
 
 ## Widgets
 
@@ -60,7 +60,7 @@ Uses: `agents/sessions`, `system/vitals`.
 
 ### AI agent sessions — `agents/sessions`
 
-Claude Code, Gemini CLI… sessions as written by the agent-sessions hook, with git status. Options are set once in Tessera → Settings → Data sources.
+Claude Code, Gemini CLI… sessions as written by the agent-sessions hook, with git status. Options are set once in Kiosko → Settings → Data sources.
 
 | Option | Type | Default | |
 |---|---|---|---|
@@ -76,11 +76,11 @@ Claude Code, Gemini CLI… sessions as written by the agent-sessions hook, with 
 
 ### 8-bit runner — `agents/runner`
 
-A side-scrolling platformer run through a server room, in flat colours. Every slot plays a different ending; now and then the runner ships the release. Add it in Tessera → Screens → Interludes.
+A side-scrolling platformer run through a server room, in flat colours. Every slot plays a different ending; now and then the runner ships the release. Add it in Kiosko → Screens → Interludes.
 
 | Option | Type | Default | |
 |---|---|---|---|
-| `title` | string | `"TESSERA"` | Name in the score. Letters, digits and - . ! ? |
+| `title` | string | `"KIOSKO"` | Name in the score. Letters, digits and - . ! ? |
 
 ## Development
 
@@ -88,14 +88,14 @@ A side-scrolling platformer run through a server room, in flat colours. Every sl
 npm install
 npm test          # node:test
 npm run check     # TypeScript
-npm run build     # dist/index.js, what Tessera loads
+npm run build     # dist/index.js, what Kiosko loads
 ```
 
-To try it in a running Tessera without publishing: `tessera plugins link .` and restart Tessera.
+To try it in a running Kiosko without publishing: `kiosko plugins link .` and restart Kiosko.
 
-Working on Tessera and its plugins together: clone them side by side
-(`tessera/` and `tessera-plugins/tessera-plugin-agents/`) and run `npm install` in
-`tessera/`; its workspaces link every plugin found in `../tessera-plugins`.
+Working on Kiosko and its plugins together: clone them side by side
+(`kiosko/` and `kiosko-plugins/kiosko-plugin-agents/`) and run `npm install` in
+`kiosko/`; its workspaces link every plugin found in `../kiosko-plugins`.
 
 ## License
 

@@ -6,7 +6,7 @@
  * The art direction is the original's: the normal state is darkness, and
  * colour is spent only on the session that claims you.
  */
-import { defineInterlude, definePlugin, defineSource, defineWidget, t } from '@tessera/sdk';
+import { defineInterlude, definePlugin, defineSource, defineWidget, t } from '@kiosko/sdk';
 import { DEMO_VITALS, scenario } from './demo.ts';
 import { drawSessions, drawSummaryStrip } from './draw.ts';
 import { DEFAULT_TEXTS, levelFor, runnerPlayer } from './platformer.ts';
@@ -161,7 +161,7 @@ export default definePlugin({
     en: 'Claude Code and Gemini CLI sessions at a glance: who waits for you, for how long, and git status. Ported from aimonitor.',
     es: 'Las sesiones de Claude Code y Gemini CLI de un vistazo: quién te espera, desde cuándo y el estado de git. Portado de aimonitor.',
   },
-  author: 'Tessera',
+  author: 'Kiosko',
   license: 'MIT',
   icon: 'bot',
   widgets: [sessionsWidget, summaryWidget],
