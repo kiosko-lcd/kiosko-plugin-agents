@@ -27,6 +27,7 @@ export const sessionsSource = defineSource({
     dir: t.string({
       default: '~/.aimonitor/sessions',
       format: 'path',
+      risk: 'path',
       label: { en: 'Sessions folder', es: 'Carpeta de sesiones' },
       help: { en: 'Where the hook writes one JSON file per session. Empty: $AGENT_SESSIONS_DIR or ~/.aimonitor/sessions.', es: 'Donde el hook escribe un JSON por sesión. Vacío: $AGENT_SESSIONS_DIR o ~/.aimonitor/sessions.' },
     }),
