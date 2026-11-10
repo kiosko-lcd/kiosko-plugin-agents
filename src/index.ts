@@ -9,9 +9,10 @@
 import { defineInterlude, definePlugin, defineSource, defineWidget, t } from '@kiosko/sdk';
 import { DEMO_VITALS, scenario } from './demo.ts';
 import { drawSessions, drawSummaryStrip } from './draw.ts';
+import { STATE_LABEL } from './texts.ts';
 import { DEFAULT_TEXTS, levelFor, runnerPlayer } from './platformer.ts';
 import { resolveDir, watchSessions } from './source.ts';
-import { needsPermission, sessionsOf, SESSIONS_SOURCE, type SessionsData } from './types.ts';
+import { filterSessions, needsPermission, sessionsOf, SESSIONS_SOURCE, type SessionsData, type SessionState } from './types.ts';
 
 export type { SessionView, SessionsData, Weight } from './types.ts';
 export { assignWeights, plan, spareWidth } from './select.ts';
@@ -40,7 +41,10 @@ export const sessionsSource = defineSource({
       default: 15 * 60_000,
       min: 60_000,
       label: { en: 'Drop silent working sessions after', es: 'Descartar sesiones activas calladas tras' },
-      help: { en: 'A session that says it is working and writes nothing for this long is dead.', es: 'Una sesión que dice estar trabajando y no escribe nada en este tiempo está muerta.' },
+      help: {
+        en: 'A session that says it is working and writes nothing for this long is dead. The cats room turns it into Schrödinger\'s box at half of this.',
+        es: 'Una sesión que dice estar trabajando y no escribe nada en este tiempo está muerta. La habitación de gatos la convierte en la caja de Schrödinger a la mitad.',
+      },
     }),
     staleMs: t.duration({
       default: 2 * 3_600_000,
@@ -61,19 +65,44 @@ export const sessionsSource = defineSource({
     const o = ctx.options;
     return watchSessions({ ...o, dir: resolveDir(o.dir) }, { emit, log: ctx.log, signal: ctx.signal });
   },
-  demo: ({ now }) => ({ sessions: scenario('threeClaim', now) }),
+  demo: ({ now }) => ({ sessions: scenario('threeClaim', now), zombieMs: 15 * 60_000 }),
 });
 
+/** States a widget can leave out; the first is what "Add" offers, the one most often hidden. */
+const STATES = ['active', 'idle', 'ready', 'waiting', 'permission'] as const satisfies readonly SessionState[];
+
+/** The `projects` filter every sessions widget offers. */
+const projectsField = () =>
+  t.filter({
+    label: { en: 'Projects', es: 'Proyectos' },
+    help: {
+      en: 'Empty: all. Project, repository or folder names or patterns, comma-separated: * matches anything, a leading ! leaves out (web-app, acme-*, !scratch).',
+      es: 'Vacío: todos. Nombres o patrones de proyecto, repositorio o carpeta, separados por comas: * vale por cualquier cosa y un ! delante excluye (web-app, acme-*, !pruebas).',
+    },
+  });
+
 const sessionsOptions = t.object({
+  projects: projectsField(),
+  hideStates: t.list(t.enum(STATES, { labels: STATE_LABEL }), {
+    label: { en: 'Hide sessions that are', es: 'Ocultar las sesiones en estado' },
+    help: { en: 'E.g. Active and Idle, to see only the ones that claim you.', es: 'Por ejemplo, Activa e Inactiva, para ver sólo las que te reclaman.' },
+  }),
+  maxTiles: t.integer({
+    default: 0,
+    min: 0,
+    max: 12,
+    label: { en: 'Most tiles', es: 'Casillas como mucho' },
+    help: { en: '0 = as many as fit. The rest go to the summary column, so the tiles get wider.', es: '0 = las que quepan. El resto va a la columna de resumen, así que las casillas se ensanchan.' },
+  }),
   tileMin: t.integer({ default: 320, min: 120, max: 1000, unit: 'px', label: { en: 'Narrowest tile', es: 'Casilla más estrecha' }, help: { en: 'At a 374 px tall widget; scales with the height. Sessions that would need narrower tiles go to the summary column.', es: 'Para un widget de 374 px de alto; escala con la altura. Las sesiones que no quepan van a la columna de resumen.' } }),
-  tileMax: t.integer({ default: 430, min: 120, max: 2000, unit: 'px', label: { en: 'Widest tile', es: 'Casilla más ancha' }, help: { en: 'So a single session doesn’t stretch across the panel.', es: 'Para que una sola sesión no se estire a todo el panel.' } }),
+  tileMax: t.integer({ default: 430, min: 0, max: 2000, unit: 'px', label: { en: 'Widest tile', es: 'Casilla más ancha' }, help: { en: 'So a single session doesn’t stretch across the panel. 0 = no limit: the tiles fill the width.', es: 'Para que una sola sesión no se estire a todo el panel. 0 = sin límite: las casillas llenan el ancho.' } }),
   gap: t.integer({ default: 12, min: 0, max: 60, unit: 'px', label: { en: 'Gap between tiles', es: 'Separación entre casillas' } }),
-  detailLines: t.integer({ default: 3, min: 1, max: 6, slider: true, label: { en: 'Detail lines', es: 'Líneas de detalle' }, help: { en: 'Lines of the last tool call or message before cutting with an ellipsis.', es: 'Líneas de la última herramienta o mensaje antes de cortar con puntos suspensivos.' } }),
+  detailLines: t.integer({ default: 3, min: 0, max: 6, slider: true, label: { en: 'Detail lines', es: 'Líneas de detalle' }, help: { en: 'Lines of the last tool call or message before cutting with an ellipsis. 0 hides it.', es: 'Líneas de la última herramienta o mensaje antes de cortar con puntos suspensivos. 0 lo oculta.' } }),
   spineWidth: t.integer({ default: 7, min: 2, max: 30, unit: 'px', advanced: true, label: { en: 'Colour spine width', es: 'Ancho de la espina de color' } }),
   summaryWidth: t.integer({ default: 150, min: 80, max: 400, unit: 'px', advanced: true, label: { en: 'Summary column width', es: 'Ancho de la columna de resumen' } }),
-  stretch: t.boolean({ label: { en: 'Stretch tiles to fill the width', es: 'Estirar las casillas a todo el ancho' } }),
   align: t.enum(['left', 'center', 'right'] as const, { label: { en: 'Alignment', es: 'Alineación' }, labels: { left: { en: 'Left', es: 'Izquierda' }, center: { en: 'Centre', es: 'Centro' }, right: { en: 'Right', es: 'Derecha' } } }),
   showGit: t.boolean({ default: true, label: { en: 'Show uncommitted files', es: 'Mostrar ficheros sin commit' } }),
+  showId: t.boolean({ default: true, label: { en: 'Show the console id', es: 'Mostrar el id de la consola' }, help: { en: 'PROVIDER · ABC123 in the corner, to tell two consoles of one project apart.', es: 'PROVEEDOR · ABC123 en la esquina, para distinguir dos consolas del mismo proyecto.' } }),
 });
 
 export const sessionsWidget = defineWidget({
@@ -94,8 +123,9 @@ export const sessionsWidget = defineWidget({
   render(g, ctx) {
     drawSessions(g, ctx, ctx.options);
   },
-  urgent: ({ sources }) => needsPermission(sessionsOf(sources)),
-  idle: ({ sources }) => sessionsOf(sources).length === 0,
+  urgent: ({ sources, options }) => needsPermission(filterSessions(sessionsOf(sources), options)),
+  idle: ({ sources, options }) => filterSessions(sessionsOf(sources), options).length === 0,
+  empty: ({ sources, options }) => filterSessions(sessionsOf(sources), options).length === 0,
   demo: ({ now }) => ({ sources: { [SESSIONS_SOURCE]: { sessions: scenario('threeClaim', now) } } }),
 });
 
@@ -112,16 +142,18 @@ export const summaryWidget = defineWidget({
   chrome: 'bare',
   size: { min: { w: 400, h: 32 }, preferred: { w: 1900, h: 60 } },
   options: t.object({
-    ram: t.boolean({ default: true, label: { en: 'Show RAM', es: 'Mostrar la RAM' }, help: { en: 'Needs the system vitals source.', es: 'Necesita la fuente de vitales del sistema.' } }),
-    clock: t.boolean({ default: true, label: { en: 'Show the clock', es: 'Mostrar la hora' } }),
-    rule: t.boolean({ default: true, label: { en: 'Rule underneath', es: 'Raya debajo' } }),
+    projects: projectsField(),
+    showRam: t.boolean({ default: true, label: { en: 'Show RAM', es: 'Mostrar la RAM' }, help: { en: 'Needs the system vitals source.', es: 'Necesita la fuente de vitales del sistema.' } }),
+    showConsoles: t.boolean({ default: true, label: { en: 'Show how many consoles', es: 'Mostrar cuántas consolas' }, help: { en: 'Off: only how many wait for you, for short strips.', es: 'Apagado: sólo cuántas te esperan, para franjas cortas.' } }),
+    showClock: t.boolean({ default: true, label: { en: 'Show the clock', es: 'Mostrar la hora' } }),
+    showRule: t.boolean({ default: true, label: { en: 'Rule underneath', es: 'Raya debajo' } }),
   }),
   sources: [SESSIONS_SOURCE, 'system/vitals'],
   redraw: 'minute',
   render(g, ctx) {
     drawSummaryStrip(g, ctx, ctx.options);
   },
-  idle: ({ sources }) => sessionsOf(sources).length === 0,
+  idle: ({ sources, options }) => filterSessions(sessionsOf(sources), options).length === 0,
   demo: ({ now }) => ({ sources: { [SESSIONS_SOURCE]: { sessions: scenario('threeClaim', now) }, 'system/vitals': DEMO_VITALS } }),
 });
 

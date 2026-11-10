@@ -35,6 +35,8 @@ export interface PlanOptions {
   gap: number;
   /** Width of the overflow summary column, when needed. */
   summaryWidth: number;
+  /** At most this many tiles, the rest to the overflow column. 0 or absent: as many as fit. */
+  maxTiles?: number;
 }
 
 export interface Plan {
@@ -46,17 +48,17 @@ export interface Plan {
 }
 
 /**
- * How many tiles fit in `available` px within the min/max widths, and what
- * is left for the overflow column. One tile is always shown, even narrower
- * than `min`: the most urgent session must be visible.
+ * How many tiles fit in `available` px within the min/max widths (and
+ * `maxTiles`), and what is left for the overflow column. One tile is always
+ * shown, even narrower than `min`: the most urgent session must be visible.
  */
 export function plan(records: SessionView[], available: number, o: PlanOptions): Plan {
   const { min, max, gap, summaryWidth } = o;
   const all = assignWeights(order(records));
   const fits = (n: number, reserve: number) => (available - reserve - (n - 1) * gap) / n >= min;
 
-  let visible = all.length;
-  let reserve = 0;
+  let visible = o.maxTiles && o.maxTiles > 0 ? Math.min(all.length, Math.floor(o.maxTiles)) : all.length;
+  let reserve = visible < all.length ? summaryWidth + gap : 0;
   while (visible > 1 && !fits(visible, reserve)) {
     visible--;
     reserve = summaryWidth + gap; // as soon as one is left out, it must be summarised

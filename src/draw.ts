@@ -6,13 +6,13 @@
  */
 import { STATE_PRIORITY, claims } from '@loksly/agent-sessions';
 import type { Graphics, Localized, RenderContext, ThemeColors } from '@kiosko/sdk';
-import { clock, countdown, elapsed, shortId } from './format.ts';
+import { elapsed, gigabytes, shortId } from './format.ts';
 import { plan, usedWidth, type Tile } from './select.ts';
 import { STATE_LABEL, TEXT, fill } from './texts.ts';
-import { sessionsOf, type SessionState, type SessionView, type Weight } from './types.ts';
+import { filterSessions, sessionsOf, type SessionState, type SessionView, type Weight } from './types.ts';
 
 type Kit = RenderContext<unknown, unknown>['kit'];
-type Ctx = Pick<RenderContext<unknown, unknown>, 'box' | 'theme' | 'kit' | 'now' | 't' | 'sources'>;
+type Ctx = Pick<RenderContext<unknown, unknown>, 'box' | 'theme' | 'kit' | 'now' | 't' | 'fmt' | 'sources'>;
 
 /** Body height the original layout was measured at. */
 export const REF_H = 374;
@@ -69,13 +69,15 @@ export interface TileStyle {
   /** Tile width the text sizes are designed for (the configured minimum, scaled). */
   designW: number;
   spineWidth: number;
+  /** 0: no detail, the project name takes its room. */
   detailLines: number;
   showGit: boolean;
+  showId: boolean;
 }
 
 /** One session tile. */
 export function drawTile(g: Graphics, ctx: Ctx, tile: Tile, x: number, y: number, w: number, h: number, st: TileStyle): void {
-  const { kit, theme, now, t } = ctx;
+  const { kit, theme, now, t, fmt } = ctx;
   const c = theme.colors;
   const f = theme.fonts;
   const { record: r, weight } = tile;
@@ -113,7 +115,7 @@ export function drawTile(g: Graphics, ctx: Ctx, tile: Tile, x: number, y: number
   const label = kit.truncate(g, t(meeting ? TEXT.meeting : STATE_LABEL[r.state]), cw, labelOpts);
   const labelW = kit.drawTracked(g, label, cx, y + 32 * s, labelOpts);
   const idOpts = { size: Math.max(10, Math.round(15 * fs)), family: f.mono, color: ink.faint, align: 'right' as const };
-  const ids = meeting ? [clock(new Date(r.startsAt!))] : [`${String(r.provider).toUpperCase()} · ${shortId(r.session_id)}`, shortId(r.session_id)];
+  const ids = meeting ? [fmt.time(r.startsAt!)] : st.showId ? [`${String(r.provider).toUpperCase()} · ${shortId(r.session_id)}`, shortId(r.session_id)] : [];
   const id = ids.find((txt) => kit.measureTracked(g, txt, idOpts) <= cw - labelW - 12 * fs);
   if (id) kit.drawTracked(g, id, x + w - pad, y + 31 * s, idOpts);
 
@@ -125,7 +127,7 @@ export function drawTile(g: Graphics, ctx: Ctx, tile: Tile, x: number, y: number
   const footerBase = y + h - 16 * s;
   const elapsedSize = Math.round(52 * fs);
   const elapsedBase = footerBase - 26 * s;
-  const big = !meeting ? elapsed(now - r.since, t(TEXT.now)) : r.startsAt! <= now ? t(TEXT.now) : countdown(r.startsAt! - now);
+  const big = !meeting ? elapsed(fmt, now - r.since, t(TEXT.now)) : r.startsAt! <= now ? t(TEXT.now) : fmt.duration(r.startsAt! - now, { round: 'up' });
   const bigOpts = { size: elapsedSize, family: f.monoBold, color: ink.strong, tracking: -1 * fs };
   kit.drawClipped(g, big, cx, elapsedBase, cw, bigOpts);
 
@@ -139,15 +141,16 @@ export function drawTile(g: Graphics, ctx: Ctx, tile: Tile, x: number, y: number
   const projMax = Math.round(48 * fs);
   const projMin = Math.max(12, Math.round(26 * fs));
   // In a short box the detail gives up lines before the project name gives up its room.
-  let maxLines = Math.max(1, st.detailLines);
+  let maxLines = Math.max(0, st.detailLines);
   while (maxLines > 1 && detailBase - (maxLines - 1) * lead - 24 * s - midTop < projMin * 0.9) maxLines--;
-  const lines = kit.wrapLines(g, r.detail, cw, maxLines, detailOpts);
+  const lines = maxLines > 0 && r.detail ? kit.wrapLines(g, r.detail, cw, maxLines, detailOpts) : [];
   lines.forEach((line, i) => kit.drawTracked(g, line, cx, detailBase - (lines.length - 1 - i) * lead, detailOpts));
   const detailTop = detailBase - Math.max(0, lines.length - 1) * lead;
 
   // 3. Project name: what identifies the console. It shrinks as far as it
-  //    must before accepting an ellipsis.
-  const midBottom = detailTop - 24 * s;
+  //    must before accepting an ellipsis. Without detail it comes down to
+  //    where the detail would have been.
+  const midBottom = maxLines > 0 ? detailTop - 24 * s : detailBase;
   const projOpts = { size: projMax, family: f.sansBold, color: ink.strong, tracking: 0.5 * fs };
   projOpts.size = Math.min(kit.fitSize(g, r.project, cw, projOpts, projMin), Math.max(projMin, Math.floor((midBottom - midTop) / 0.8)));
   const projBase = Math.round((midTop + midBottom) / 2 + projOpts.size * 0.36);
@@ -196,15 +199,19 @@ export function drawOverflow(g: Graphics, ctx: Ctx, rest: SessionView[], x: numb
 }
 
 export interface SessionsOptions {
+  projects: string[];
+  hideStates: SessionState[];
+  maxTiles: number;
   tileMin: number;
+  /** 0: no cap, the tiles stretch to fill the width. */
   tileMax: number;
   gap: number;
   summaryWidth: number;
   detailLines: number;
   spineWidth: number;
-  stretch: boolean;
   align: 'left' | 'center' | 'right';
   showGit: boolean;
+  showId: boolean;
 }
 
 /** A centred, faint line: the widget has nothing to show. */
@@ -218,7 +225,7 @@ function drawQuiet(g: Graphics, ctx: Ctx, text: Localized): void {
 /** The whole sessions widget. */
 export function drawSessions(g: Graphics, ctx: Ctx, o: SessionsOptions): void {
   const { box } = ctx;
-  const sessions = sessionsOf(ctx.sources);
+  const sessions = filterSessions(sessionsOf(ctx.sources), o);
   if (!sessions.length) {
     drawQuiet(g, ctx, TEXT.noSessions);
     return;
@@ -226,10 +233,11 @@ export function drawSessions(g: Graphics, ctx: Ctx, o: SessionsOptions): void {
   const s = clamp(box.h / REF_H, 0.5, 1.6);
   const gap = Math.max(2, Math.round(o.gap * s));
   const designW = o.tileMin * s;
-  const p = plan(sessions, box.w, { min: designW, max: o.stretch ? Infinity : o.tileMax * s, gap, summaryWidth: Math.round(o.summaryWidth * s) });
+  const max = o.tileMax > 0 ? Math.max(o.tileMin, o.tileMax) * s : Infinity;
+  const p = plan(sessions, box.w, { min: designW, max, gap, summaryWidth: Math.round(o.summaryWidth * s), maxTiles: o.maxTiles });
   const free = box.w - usedWidth(p, gap);
   let x = Math.round(box.x + (o.align === 'center' ? free / 2 : o.align === 'right' ? free : 0));
-  const st: TileStyle = { s, designW, spineWidth: o.spineWidth, detailLines: o.detailLines, showGit: o.showGit };
+  const st: TileStyle = { s, designW, spineWidth: o.spineWidth, detailLines: o.detailLines, showGit: o.showGit, showId: o.showId };
   for (const tile of p.tiles) {
     drawTile(g, ctx, tile, x, box.y, p.tileWidth, box.h, st);
     x += p.tileWidth + gap;
@@ -238,9 +246,11 @@ export function drawSessions(g: Graphics, ctx: Ctx, o: SessionsOptions): void {
 }
 
 export interface SummaryOptions {
-  ram: boolean;
-  clock: boolean;
-  rule: boolean;
+  projects: string[];
+  showRam: boolean;
+  showConsoles: boolean;
+  showClock: boolean;
+  showRule: boolean;
 }
 
 interface Part {
@@ -256,29 +266,29 @@ interface Part {
  * the eye whether anything is up.
  */
 export function drawSummaryStrip(g: Graphics, ctx: Ctx, o: SummaryOptions): void {
-  const { box, kit, theme, now, t, sources } = ctx;
+  const { box, kit, theme, now, t, fmt, sources } = ctx;
   const c = theme.colors;
   const f = theme.fonts;
-  const sessions = sessionsOf(sources);
+  const sessions = filterSessions(sessionsOf(sources), o);
   // A strip: it grows with its height, but a tall box must not turn it into a poster.
   const s = clamp(Math.min(box.h / 56, box.w / 900), 0.4, 2);
-  const ruleH = o.rule ? 1 : 0;
+  const ruleH = o.showRule ? 1 : 0;
   const mid = box.y + (box.h - ruleH) / 2;
 
   let right = box.x + box.w;
-  if (o.clock) {
+  if (o.showClock) {
     const cs = Math.max(10, Math.round(30 * s));
-    const cw = kit.drawTracked(g, clock(new Date(now)), right, mid + cs * 0.36, { size: cs, family: f.monoBold, color: c.ink, align: 'right' });
+    const cw = kit.drawTracked(g, fmt.time(now), right, mid + cs * 0.36, { size: cs, family: f.monoBold, color: c.ink, align: 'right' });
     right -= cw + Math.round(24 * s);
   }
 
   const parts: Part[] = [];
   const mem = (sources['system/vitals'] as { mem?: { used: number; total: number } } | undefined)?.mem;
-  if (o.ram && mem && mem.total > 0) {
-    parts.push({ text: `RAM: ${Math.round(mem.used / 1024 ** 3)}GB/${Math.round(mem.total / 1024 ** 3)}GB`, color: c.ink, keep: 0 });
+  if (o.showRam && mem && mem.total > 0) {
+    parts.push({ text: `RAM: ${gigabytes(mem.used)}/${gigabytes(mem.total)}`, color: c.ink, keep: 0 });
   }
   const n = sessions.length;
-  parts.push({ text: n === 1 ? t(TEXT.console) : fill(t(TEXT.consoles), { n }), color: c.inkDim, keep: 1 });
+  if (o.showConsoles) parts.push({ text: n === 1 ? t(TEXT.console) : fill(t(TEXT.consoles), { n }), color: c.inkDim, keep: 1 });
   const waiting = sessions.filter(claims);
   const urgent = [...waiting].sort((a, b) => STATE_PRIORITY[b.state] - STATE_PRIORITY[a.state])[0];
   const waitText = waiting.length === 0 ? t(TEXT.nobody) : waiting.length === 1 ? t(TEXT.waitingOne) : fill(t(TEXT.waitingMany), { n: waiting.length });
@@ -300,5 +310,5 @@ export function drawSummaryStrip(g: Graphics, ctx: Ctx, o: SummaryOptions): void
     x += kit.drawTracked(g, kit.truncate(g, p.text, Math.max(0, right - x), label()), x, base, { ...label(), color: p.color });
   });
 
-  if (o.rule) hairline(g, box.x, box.y + box.h - 1, box.w, c.surfaceEdge);
+  if (o.showRule) hairline(g, box.x, box.y + box.h - 1, box.w, c.surfaceEdge);
 }

@@ -81,7 +81,7 @@ export function watchSessions(o: WatchOptions, h: WatchHooks): () => void {
     try {
       const t = now();
       const sessions = await loadSessions(o, enrich, t, (r) => h.log(`dropped dead session ${r.project} (${r.state}, silent for ${Math.round((t - r.updated) / 60_000)} min)`));
-      if (!stopped) h.emit({ sessions });
+      if (!stopped) h.emit({ sessions, zombieMs: o.zombieMs });
     } catch (err) {
       h.log(`reading ${o.dir} failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {

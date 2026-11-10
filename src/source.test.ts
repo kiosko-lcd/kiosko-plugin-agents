@@ -65,6 +65,7 @@ test('watchSessions: emits at start and again when a session file changes', asyn
     };
     await until(() => seen.length >= 1);
     assert.equal(seen[0]!.sessions.length, 1);
+    assert.equal(seen[0]!.zombieMs, 15 * 60_000, 'the threshold travels with the data, for the cats');
     writeFileSync(join(dir, 'two.json'), JSON.stringify(record('two', 'permission', 0, Date.now())));
     await until(() => seen.some((d) => d.sessions.length === 2));
   } finally {

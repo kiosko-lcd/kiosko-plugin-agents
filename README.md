@@ -32,15 +32,18 @@ Uses: `agents/sessions`.
 
 | Option | Type | Default | |
 |---|---|---|---|
+| `projects` | list | `[]` | Projects. Empty: all. Project, repository or folder names or patterns, comma-separated: * matches anything, a leading ! leaves out (web-app, acme-*, !scratch). |
+| `hideStates` | list | `[]` | Hide sessions that are. E.g. Active and Idle, to see only the ones that claim you. |
+| `maxTiles` | number | `0` | Most tiles. 0 = as many as fit. The rest go to the summary column, so the tiles get wider. |
 | `tileMin` | number | `320` | Narrowest tile. At a 374 px tall widget; scales with the height. Sessions that would need narrower tiles go to the summary column. |
-| `tileMax` | number | `430` | Widest tile. So a single session doesn’t stretch across the panel. |
+| `tileMax` | number | `430` | Widest tile. So a single session doesn’t stretch across the panel. 0 = no limit: the tiles fill the width. |
 | `gap` | number | `12` | Gap between tiles |
-| `detailLines` | number | `3` | Detail lines. Lines of the last tool call or message before cutting with an ellipsis. |
+| `detailLines` | number | `3` | Detail lines. Lines of the last tool call or message before cutting with an ellipsis. 0 hides it. |
 | `spineWidth` | number | `7` | Colour spine width |
 | `summaryWidth` | number | `150` | Summary column width |
-| `stretch` | boolean | `false` | Stretch tiles to fill the width |
 | `align` | `left` \| `center` \| `right` | `"left"` | Alignment |
 | `showGit` | boolean | `true` | Show uncommitted files |
+| `showId` | boolean | `true` | Show the console id. PROVIDER · ABC123 in the corner, to tell two consoles of one project apart. |
 
 ### Agents summary strip — `agents/summary`
 
@@ -52,9 +55,11 @@ Uses: `agents/sessions`, `system/vitals`.
 
 | Option | Type | Default | |
 |---|---|---|---|
-| `ram` | boolean | `true` | Show RAM. Needs the system vitals source. |
-| `clock` | boolean | `true` | Show the clock |
-| `rule` | boolean | `true` | Rule underneath |
+| `projects` | list | `[]` | Projects. Empty: all. Project, repository or folder names or patterns, comma-separated: * matches anything, a leading ! leaves out (web-app, acme-*, !scratch). |
+| `showRam` | boolean | `true` | Show RAM. Needs the system vitals source. |
+| `showConsoles` | boolean | `true` | Show how many consoles. Off: only how many wait for you, for short strips. |
+| `showClock` | boolean | `true` | Show the clock |
+| `showRule` | boolean | `true` | Rule underneath |
 
 ## Data sources
 
@@ -66,7 +71,7 @@ Claude Code, Gemini CLI… sessions as written by the agent-sessions hook, with 
 |---|---|---|---|
 | `dir` | string | `"~/.aimonitor/sessions"` | Sessions folder. Where the hook writes one JSON file per session. Empty: $AGENT_SESSIONS_DIR or ~/.aimonitor/sessions. |
 | `git` | boolean | `true` | Read git status. Repository name and uncommitted files of each session (runs git). |
-| `zombieMs` | duration (ms) | `900000` | Drop silent working sessions after. A session that says it is working and writes nothing for this long is dead. |
+| `zombieMs` | duration (ms) | `900000` | Drop silent working sessions after. A session that says it is working and writes nothing for this long is dead. The cats room turns it into Schrödinger's box at half of this. |
 | `staleMs` | duration (ms) | `7200000` | Drop any silent session after. The net under SessionEnd, which never arrives if the terminal is killed. Raise it if you leave permission prompts waiting for hours. |
 | `reap` | boolean | `true` | Delete files of dead sessions. Safe: a live session writes its file again on its next event. |
 | `debounceMs` | duration (ms) | `200` | Wait for a burst of events |

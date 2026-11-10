@@ -76,6 +76,16 @@ test('plan: with overflow the width cap is lifted, so no dead gap is left', () =
   assert.equal(usedWidth(p, OLD.gap), 1100);
 });
 
+test('plan: maxTiles caps the tiles and sends the rest to the overflow column', () => {
+  const p = plan(many(5), 1920, { ...OLD, maxTiles: 2 });
+  assert.equal(p.tiles.length, 2);
+  assert.equal(p.overflow.length, 3);
+  assert.equal(p.summaryWidth, OLD.summaryWidth);
+  assert.equal(usedWidth(p, OLD.gap), 1920, 'the tiles widen to fill the row');
+  assert.equal(plan(many(2), 1920, { ...OLD, maxTiles: 3 }).overflow.length, 0, 'a cap above the count changes nothing');
+  assert.equal(plan(many(9), 800, { ...OLD, maxTiles: 6 }).tiles.length, plan(many(9), 800, OLD).tiles.length, 'it never fits more than the width allows');
+});
+
 test('plan: no sessions, no tiles', () => {
   const p = plan([], 1000, OLD);
   assert.equal(p.tiles.length, 0);
