@@ -189,7 +189,7 @@ export const runner = defineInterlude({
 export default definePlugin({
   id: 'agents',
   name: { en: 'AI agents', es: 'Agentes IA' },
-  version: '0.1.0',
+  version: '0.2.0',
   description: {
     en: 'Claude Code and Gemini CLI sessions at a glance: who waits for you, for how long, and git status. Ported from aimonitor.',
     es: 'Las sesiones de Claude Code y Gemini CLI de un vistazo: quién te espera, desde cuándo y el estado de git. Portado de aimonitor.',
