@@ -190,6 +190,9 @@ export default definePlugin({
   id: 'agents',
   name: { en: 'AI agents', es: 'Agentes IA' },
   version: '0.2.0',
+  sdk: '^0.2.0',
+  permissions: { files: ['~/.aimonitor/sessions'], exec: ['git'] },
+  optional: ['system/vitals'],
   description: {
     en: 'Claude Code and Gemini CLI sessions at a glance: who waits for you, for how long, and git status. Ported from aimonitor.',
     es: 'Las sesiones de Claude Code y Gemini CLI de un vistazo: quién te espera, desde cuándo y el estado de git. Portado de aimonitor.',
@@ -200,4 +203,28 @@ export default definePlugin({
   widgets: [sessionsWidget, summaryWidget],
   sources: [sessionsSource],
   interludes: [runner],
+  templates: [
+    {
+      id: 'dashboard',
+      name: { en: 'AI agents dashboard', es: 'Tablero de agentes IA' },
+      icon: 'bot',
+      wide: [
+        { x: 0, y: 0, w: 1, h: 1 / 6, widgets: ['summary'], chrome: 'bare' },
+        { x: 0, y: 1 / 6, w: 0.55, h: 5 / 6, widgets: ['sessions'], chrome: 'bare' },
+        { x: 0.55, y: 1 / 6, w: 1 / 4, h: 5 / 6, widgets: ['vitals/vitals'], chrome: 'bare' },
+        { x: 4 / 5, y: 1 / 6, w: 1 / 5, h: 5 / 6, widgets: ['usage/rail'], chrome: 'bare' },
+      ],
+      square: [
+        { x: 0, y: 0, w: 1, h: 1 / 6, widgets: ['summary'], chrome: 'bare' },
+        { x: 0, y: 1 / 6, w: 1, h: 1 / 2, widgets: ['sessions'], chrome: 'bare' },
+        { x: 0, y: 2 / 3, w: 1, h: 1 / 3, widgets: ['usage/rail', 'vitals/vitals'], chrome: 'bare' },
+      ],
+      tall: [
+        { x: 0, y: 0, w: 1, h: 1 / 24, widgets: ['summary'], chrome: 'bare' },
+        { x: 0, y: 1 / 24, w: 1, h: 13 / 24, widgets: ['sessions'], chrome: 'bare' },
+        { x: 0, y: 7 / 12, w: 1, h: 5 / 24, widgets: ['vitals/vitals'], chrome: 'bare' },
+        { x: 0, y: 19 / 24, w: 1, h: 5 / 24, widgets: ['usage/rail'], chrome: 'bare' },
+      ],
+    },
+  ],
 });
