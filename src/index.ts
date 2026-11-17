@@ -189,7 +189,7 @@ export const runner = defineInterlude({
 export default definePlugin({
   id: 'agents',
   name: { en: 'AI agents', es: 'Agentes IA' },
-  version: '0.2.0',
+  version: '0.2.1',
   sdk: '^0.2.0',
   permissions: { files: ['~/.aimonitor/sessions'], exec: ['git'] },
   optional: ['system/vitals'],
