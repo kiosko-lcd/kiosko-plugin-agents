@@ -20,6 +20,13 @@ npm install --prefix ~/.config/kiosko/plugins kiosko-plugin-agents
 
 - A hook that writes agent session files. With Claude Code, add `agent-sessions-hook` (from [`@loksly/agent-sessions`](https://github.com/kiosko-lcd/kiosko/tree/main/packages/agent-sessions)) to your `settings.json` hooks; sessions land in `~/.aimonitor/sessions` by default.
 
+## What it does on your machine
+
+- **Runs**: `git`.
+- **Reads**: `~/.aimonitor/sessions`.
+
+- Uses `system/vitals` from [kiosko-plugin-system](../kiosko-plugin-system) when it is there.
+
 ## Widgets
 
 ### Agent sessions — `agents/sessions`

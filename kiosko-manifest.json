@@ -1,0 +1,684 @@
+{
+  "manifest": 1,
+  "id": "agents",
+  "package": "kiosko-plugin-agents",
+  "name": {
+    "en": "AI agents",
+    "es": "Agentes IA"
+  },
+  "version": "0.2.1",
+  "description": {
+    "en": "Claude Code and Gemini CLI sessions at a glance: who waits for you, for how long, and git status. Ported from aimonitor.",
+    "es": "Las sesiones de Claude Code y Gemini CLI de un vistazo: quién te espera, desde cuándo y el estado de git. Portado de aimonitor."
+  },
+  "author": "Kiosko",
+  "license": "MIT",
+  "homepage": "https://github.com/kiosko-lcd/kiosko-plugin-agents#readme",
+  "repository": "https://github.com/kiosko-lcd/kiosko-plugin-agents.git",
+  "icon": "bot",
+  "sdk": "^0.2.0",
+  "platforms": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "languages": [
+    "en",
+    "es"
+  ],
+  "categories": [
+    "agents"
+  ],
+  "tags": [
+    "claude",
+    "gemini",
+    "ai",
+    "sessions",
+    "git",
+    "header"
+  ],
+  "permissions": {
+    "files": [
+      "~/.aimonitor/sessions"
+    ],
+    "exec": [
+      "git"
+    ]
+  },
+  "riskyOptions": [
+    {
+      "path": "agents/sessions: dir",
+      "risk": [
+        "path"
+      ],
+      "secret": false
+    }
+  ],
+  "requires": [],
+  "optional": [
+    {
+      "type": "system/vitals",
+      "plugin": "system"
+    }
+  ],
+  "widgets": [
+    {
+      "type": "agents/sessions",
+      "name": {
+        "en": "Agent sessions",
+        "es": "Sesiones de agentes"
+      },
+      "description": {
+        "en": "One tile per AI coding session. The one that needs you most turns solid, the others that wait get a colour spine, and working ones stay dark.",
+        "es": "Una casilla por sesión de IA. La que más te necesita se enciende entera, las demás que esperan llevan una espina de color y las que trabajan quedan a oscuras."
+      },
+      "icon": "bot",
+      "category": "agents",
+      "tags": [
+        "claude",
+        "gemini",
+        "ai",
+        "sessions",
+        "git"
+      ],
+      "size": {
+        "min": {
+          "w": 400,
+          "h": 200
+        },
+        "preferred": {
+          "w": 1500,
+          "h": 390
+        }
+      },
+      "chrome": "bare",
+      "sources": [
+        "agents/sessions"
+      ],
+      "options": {
+        "default": {
+          "projects": [],
+          "hideStates": [],
+          "maxTiles": 0,
+          "tileMin": 320,
+          "tileMax": 430,
+          "gap": 12,
+          "detailLines": 3,
+          "spineWidth": 7,
+          "summaryWidth": 150,
+          "align": "left",
+          "showGit": true,
+          "showId": true
+        },
+        "x-ui": {},
+        "type": "object",
+        "properties": {
+          "projects": {
+            "title": "Projects",
+            "description": "Empty: all. Project, repository or folder names or patterns, comma-separated: * matches anything, a leading ! leaves out (web-app, acme-*, !scratch).",
+            "default": [],
+            "x-ui": {
+              "label": {
+                "en": "Projects",
+                "es": "Proyectos"
+              },
+              "help": {
+                "en": "Empty: all. Project, repository or folder names or patterns, comma-separated: * matches anything, a leading ! leaves out (web-app, acme-*, !scratch).",
+                "es": "Vacío: todos. Nombres o patrones de proyecto, repositorio o carpeta, separados por comas: * vale por cualquier cosa y un ! delante excluye (web-app, acme-*, !pruebas)."
+              },
+              "widget": "filter"
+            },
+            "type": "array",
+            "items": {
+              "default": "",
+              "x-ui": {
+                "placeholder": "name, group/*, !old-*"
+              },
+              "type": "string"
+            },
+            "x-filter": true
+          },
+          "hideStates": {
+            "title": "Hide sessions that are",
+            "description": "E.g. Active and Idle, to see only the ones that claim you.",
+            "default": [],
+            "x-ui": {
+              "label": {
+                "en": "Hide sessions that are",
+                "es": "Ocultar las sesiones en estado"
+              },
+              "help": {
+                "en": "E.g. Active and Idle, to see only the ones that claim you.",
+                "es": "Por ejemplo, Activa e Inactiva, para ver sólo las que te reclaman."
+              }
+            },
+            "type": "array",
+            "items": {
+              "default": "active",
+              "x-ui": {
+                "labels": {
+                  "permission": {
+                    "en": "Permission",
+                    "es": "Permiso"
+                  },
+                  "waiting": {
+                    "en": "Waiting",
+                    "es": "Espera"
+                  },
+                  "ready": {
+                    "en": "Ready",
+                    "es": "Listo"
+                  },
+                  "active": {
+                    "en": "Active",
+                    "es": "Activa"
+                  },
+                  "idle": {
+                    "en": "Idle",
+                    "es": "Inactiva"
+                  }
+                }
+              },
+              "type": "string",
+              "enum": [
+                "active",
+                "idle",
+                "ready",
+                "waiting",
+                "permission"
+              ]
+            }
+          },
+          "maxTiles": {
+            "title": "Most tiles",
+            "description": "0 = as many as fit. The rest go to the summary column, so the tiles get wider.",
+            "default": 0,
+            "x-ui": {
+              "label": {
+                "en": "Most tiles",
+                "es": "Casillas como mucho"
+              },
+              "help": {
+                "en": "0 = as many as fit. The rest go to the summary column, so the tiles get wider.",
+                "es": "0 = las que quepan. El resto va a la columna de resumen, así que las casillas se ensanchan."
+              }
+            },
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 12
+          },
+          "tileMin": {
+            "title": "Narrowest tile",
+            "description": "At a 374 px tall widget; scales with the height. Sessions that would need narrower tiles go to the summary column.",
+            "default": 320,
+            "x-ui": {
+              "label": {
+                "en": "Narrowest tile",
+                "es": "Casilla más estrecha"
+              },
+              "help": {
+                "en": "At a 374 px tall widget; scales with the height. Sessions that would need narrower tiles go to the summary column.",
+                "es": "Para un widget de 374 px de alto; escala con la altura. Las sesiones que no quepan van a la columna de resumen."
+              },
+              "unit": "px"
+            },
+            "type": "integer",
+            "minimum": 120,
+            "maximum": 1000
+          },
+          "tileMax": {
+            "title": "Widest tile",
+            "description": "So a single session doesn’t stretch across the panel. 0 = no limit: the tiles fill the width.",
+            "default": 430,
+            "x-ui": {
+              "label": {
+                "en": "Widest tile",
+                "es": "Casilla más ancha"
+              },
+              "help": {
+                "en": "So a single session doesn’t stretch across the panel. 0 = no limit: the tiles fill the width.",
+                "es": "Para que una sola sesión no se estire a todo el panel. 0 = sin límite: las casillas llenan el ancho."
+              },
+              "unit": "px"
+            },
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2000
+          },
+          "gap": {
+            "title": "Gap between tiles",
+            "default": 12,
+            "x-ui": {
+              "label": {
+                "en": "Gap between tiles",
+                "es": "Separación entre casillas"
+              },
+              "unit": "px"
+            },
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "detailLines": {
+            "title": "Detail lines",
+            "description": "Lines of the last tool call or message before cutting with an ellipsis. 0 hides it.",
+            "default": 3,
+            "x-ui": {
+              "label": {
+                "en": "Detail lines",
+                "es": "Líneas de detalle"
+              },
+              "help": {
+                "en": "Lines of the last tool call or message before cutting with an ellipsis. 0 hides it.",
+                "es": "Líneas de la última herramienta o mensaje antes de cortar con puntos suspensivos. 0 lo oculta."
+              },
+              "slider": true
+            },
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "spineWidth": {
+            "title": "Colour spine width",
+            "default": 7,
+            "x-ui": {
+              "label": {
+                "en": "Colour spine width",
+                "es": "Ancho de la espina de color"
+              },
+              "advanced": true,
+              "unit": "px"
+            },
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 30
+          },
+          "summaryWidth": {
+            "title": "Summary column width",
+            "default": 150,
+            "x-ui": {
+              "label": {
+                "en": "Summary column width",
+                "es": "Ancho de la columna de resumen"
+              },
+              "advanced": true,
+              "unit": "px"
+            },
+            "type": "integer",
+            "minimum": 80,
+            "maximum": 400
+          },
+          "align": {
+            "title": "Alignment",
+            "default": "left",
+            "x-ui": {
+              "label": {
+                "en": "Alignment",
+                "es": "Alineación"
+              },
+              "labels": {
+                "left": {
+                  "en": "Left",
+                  "es": "Izquierda"
+                },
+                "center": {
+                  "en": "Centre",
+                  "es": "Centro"
+                },
+                "right": {
+                  "en": "Right",
+                  "es": "Derecha"
+                }
+              }
+            },
+            "type": "string",
+            "enum": [
+              "left",
+              "center",
+              "right"
+            ]
+          },
+          "showGit": {
+            "title": "Show uncommitted files",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Show uncommitted files",
+                "es": "Mostrar ficheros sin commit"
+              }
+            },
+            "type": "boolean"
+          },
+          "showId": {
+            "title": "Show the console id",
+            "description": "PROVIDER · ABC123 in the corner, to tell two consoles of one project apart.",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Show the console id",
+                "es": "Mostrar el id de la consola"
+              },
+              "help": {
+                "en": "PROVIDER · ABC123 in the corner, to tell two consoles of one project apart.",
+                "es": "PROVEEDOR · ABC123 en la esquina, para distinguir dos consolas del mismo proyecto."
+              }
+            },
+            "type": "boolean"
+          }
+        }
+      },
+      "screenshot": "docs/sessions.png",
+      "animated": false,
+      "urgent": true
+    },
+    {
+      "type": "agents/summary",
+      "name": {
+        "en": "Agents summary strip",
+        "es": "Franja de resumen de agentes"
+      },
+      "description": {
+        "en": "A thin header line: RAM, how many consoles are open, how many wait for you (tinted by the most urgent) and the clock.",
+        "es": "Una línea fina de cabecera: RAM, cuántas consolas hay abiertas, cuántas te esperan (teñido por la más urgente) y la hora."
+      },
+      "icon": "activity",
+      "category": "agents",
+      "tags": [
+        "claude",
+        "gemini",
+        "header"
+      ],
+      "size": {
+        "min": {
+          "w": 400,
+          "h": 32
+        },
+        "preferred": {
+          "w": 1900,
+          "h": 60
+        }
+      },
+      "chrome": "bare",
+      "sources": [
+        "agents/sessions",
+        "system/vitals"
+      ],
+      "options": {
+        "default": {
+          "projects": [],
+          "showRam": true,
+          "showConsoles": true,
+          "showClock": true,
+          "showRule": true
+        },
+        "x-ui": {},
+        "type": "object",
+        "properties": {
+          "projects": {
+            "title": "Projects",
+            "description": "Empty: all. Project, repository or folder names or patterns, comma-separated: * matches anything, a leading ! leaves out (web-app, acme-*, !scratch).",
+            "default": [],
+            "x-ui": {
+              "label": {
+                "en": "Projects",
+                "es": "Proyectos"
+              },
+              "help": {
+                "en": "Empty: all. Project, repository or folder names or patterns, comma-separated: * matches anything, a leading ! leaves out (web-app, acme-*, !scratch).",
+                "es": "Vacío: todos. Nombres o patrones de proyecto, repositorio o carpeta, separados por comas: * vale por cualquier cosa y un ! delante excluye (web-app, acme-*, !pruebas)."
+              },
+              "widget": "filter"
+            },
+            "type": "array",
+            "items": {
+              "default": "",
+              "x-ui": {
+                "placeholder": "name, group/*, !old-*"
+              },
+              "type": "string"
+            },
+            "x-filter": true
+          },
+          "showRam": {
+            "title": "Show RAM",
+            "description": "Needs the system vitals source.",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Show RAM",
+                "es": "Mostrar la RAM"
+              },
+              "help": {
+                "en": "Needs the system vitals source.",
+                "es": "Necesita la fuente de vitales del sistema."
+              }
+            },
+            "type": "boolean"
+          },
+          "showConsoles": {
+            "title": "Show how many consoles",
+            "description": "Off: only how many wait for you, for short strips.",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Show how many consoles",
+                "es": "Mostrar cuántas consolas"
+              },
+              "help": {
+                "en": "Off: only how many wait for you, for short strips.",
+                "es": "Apagado: sólo cuántas te esperan, para franjas cortas."
+              }
+            },
+            "type": "boolean"
+          },
+          "showClock": {
+            "title": "Show the clock",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Show the clock",
+                "es": "Mostrar la hora"
+              }
+            },
+            "type": "boolean"
+          },
+          "showRule": {
+            "title": "Rule underneath",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Rule underneath",
+                "es": "Raya debajo"
+              }
+            },
+            "type": "boolean"
+          }
+        }
+      },
+      "screenshot": "docs/summary.png",
+      "animated": false,
+      "urgent": false
+    }
+  ],
+  "sources": [
+    {
+      "type": "agents/sessions",
+      "name": {
+        "en": "AI agent sessions",
+        "es": "Sesiones de agentes IA"
+      },
+      "description": {
+        "en": "Claude Code, Gemini CLI… sessions as written by the agent-sessions hook, with git status.",
+        "es": "Las sesiones de Claude Code, Gemini CLI… que escribe el hook de agent-sessions, con el estado de git."
+      },
+      "polled": false,
+      "options": {
+        "default": {
+          "dir": "~/.aimonitor/sessions",
+          "git": true,
+          "zombieMs": 900000,
+          "staleMs": 7200000,
+          "reap": true,
+          "debounceMs": 200,
+          "pollMs": 30000
+        },
+        "x-ui": {},
+        "type": "object",
+        "properties": {
+          "dir": {
+            "title": "Sessions folder",
+            "description": "Where the hook writes one JSON file per session. Empty: $AGENT_SESSIONS_DIR or ~/.aimonitor/sessions.",
+            "default": "~/.aimonitor/sessions",
+            "x-ui": {
+              "label": {
+                "en": "Sessions folder",
+                "es": "Carpeta de sesiones"
+              },
+              "help": {
+                "en": "Where the hook writes one JSON file per session. Empty: $AGENT_SESSIONS_DIR or ~/.aimonitor/sessions.",
+                "es": "Donde el hook escribe un JSON por sesión. Vacío: $AGENT_SESSIONS_DIR o ~/.aimonitor/sessions."
+              },
+              "format": "path"
+            },
+            "x-risk": "path",
+            "type": "string"
+          },
+          "git": {
+            "title": "Read git status",
+            "description": "Repository name and uncommitted files of each session (runs git).",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Read git status",
+                "es": "Leer el estado de git"
+              },
+              "help": {
+                "en": "Repository name and uncommitted files of each session (runs git).",
+                "es": "Nombre del repositorio y ficheros sin commit de cada sesión (ejecuta git)."
+              }
+            },
+            "type": "boolean"
+          },
+          "zombieMs": {
+            "title": "Drop silent working sessions after",
+            "description": "A session that says it is working and writes nothing for this long is dead. The cats room turns it into Schrödinger's box at half of this.",
+            "default": 900000,
+            "x-ui": {
+              "label": {
+                "en": "Drop silent working sessions after",
+                "es": "Descartar sesiones activas calladas tras"
+              },
+              "help": {
+                "en": "A session that says it is working and writes nothing for this long is dead. The cats room turns it into Schrödinger's box at half of this.",
+                "es": "Una sesión que dice estar trabajando y no escribe nada en este tiempo está muerta. La habitación de gatos la convierte en la caja de Schrödinger a la mitad."
+              },
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 60000
+          },
+          "staleMs": {
+            "title": "Drop any silent session after",
+            "description": "The net under SessionEnd, which never arrives if the terminal is killed. Raise it if you leave permission prompts waiting for hours.",
+            "default": 7200000,
+            "x-ui": {
+              "label": {
+                "en": "Drop any silent session after",
+                "es": "Descartar cualquier sesión callada tras"
+              },
+              "help": {
+                "en": "The net under SessionEnd, which never arrives if the terminal is killed. Raise it if you leave permission prompts waiting for hours.",
+                "es": "La red bajo SessionEnd, que no llega si se mata el terminal. Súbelo si dejas permisos esperando horas."
+              },
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 60000
+          },
+          "reap": {
+            "title": "Delete files of dead sessions",
+            "description": "Safe: a live session writes its file again on its next event.",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Delete files of dead sessions",
+                "es": "Borrar los ficheros de sesiones muertas"
+              },
+              "help": {
+                "en": "Safe: a live session writes its file again on its next event.",
+                "es": "Es seguro: una sesión viva vuelve a escribir su fichero en el siguiente evento."
+              },
+              "advanced": true
+            },
+            "type": "boolean"
+          },
+          "debounceMs": {
+            "title": "Wait for a burst of events",
+            "default": 200,
+            "x-ui": {
+              "label": {
+                "en": "Wait for a burst of events",
+                "es": "Esperar a que acabe una ráfaga de eventos"
+              },
+              "advanced": true,
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5000
+          },
+          "pollMs": {
+            "title": "Re-read every",
+            "description": "Fallback to file watching; also refreshes the git counts.",
+            "default": 30000,
+            "x-ui": {
+              "label": {
+                "en": "Re-read every",
+                "es": "Releer cada"
+              },
+              "help": {
+                "en": "Fallback to file watching; also refreshes the git counts.",
+                "es": "Respaldo de la vigilancia de ficheros; también refresca los contadores de git."
+              },
+              "advanced": true,
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 5000
+          }
+        }
+      }
+    }
+  ],
+  "interludes": [
+    {
+      "type": "agents/runner",
+      "name": {
+        "en": "8-bit runner",
+        "es": "Corredor de 8 bits"
+      },
+      "description": {
+        "en": "A side-scrolling platformer run through a server room, in flat colours. Every slot plays a different ending; now and then the runner ships the release.",
+        "es": "Una carrera de plataformas de scroll lateral por una sala de servidores, en colores planos. Cada franja acaba distinto; de vez en cuando el corredor saca la versión."
+      },
+      "icon": "gamepad",
+      "fps": 12
+    }
+  ],
+  "templates": [
+    {
+      "id": "dashboard",
+      "name": {
+        "en": "AI agents dashboard",
+        "es": "Tablero de agentes IA"
+      },
+      "icon": "bot",
+      "widgets": [
+        "agents/summary",
+        "agents/sessions",
+        "vitals/vitals",
+        "usage/rail"
+      ]
+    }
+  ]
+}
