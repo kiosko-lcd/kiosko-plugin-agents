@@ -102,3 +102,14 @@ test('summary: parts can go, the clock follows the time format, projects filter 
   summaryWidget.render(lean.g, lean.ctx);
   assert.deepEqual(lean.texts, ['1 te espera']);
 });
+
+test('summary counts: singular and plural in each language', async () => {
+  const { plural } = await import('@kiosko/sdk');
+  const { COUNT } = await import('./texts.ts');
+  assert.equal(plural(1, COUNT.consoles, 'en'), '1 console');
+  assert.equal(plural(3, COUNT.consoles, 'en'), '3 consoles');
+  assert.equal(plural(1, COUNT.waiting, 'es'), '1 te espera');
+  assert.equal(plural(2, COUNT.waiting, 'es'), '2 te esperan');
+  assert.equal(plural(2, COUNT.consoles, 'zh-TW'), '2 個終端機');
+  assert.equal(plural(2, COUNT.waiting, 'zh-CN'), '2 个在等你');
+});
