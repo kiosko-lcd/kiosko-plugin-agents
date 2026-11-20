@@ -10,25 +10,25 @@ import type { SessionState } from './types.ts';
  * DejaVu, without emoji glyphs; colour and weight already say the state.
  */
 export const STATE_LABEL: Record<SessionState, Localized> = {
-  permission: { en: 'Permission', es: 'Permiso' },
-  waiting: { en: 'Waiting', es: 'Espera' },
-  ready: { en: 'Ready', es: 'Listo' },
-  active: { en: 'Active', es: 'Activa' },
-  idle: { en: 'Idle', es: 'Inactiva' },
+  permission: { en: 'Permission', es: 'Permiso', 'zh-Hant': '權限', 'zh-Hans': '权限' },
+  waiting: { en: 'Waiting', es: 'Espera', 'zh-Hant': '等待中', 'zh-Hans': '等待中' },
+  ready: { en: 'Ready', es: 'Listo', 'zh-Hant': '就緒', 'zh-Hans': '就绪' },
+  active: { en: 'Active', es: 'Activa', 'zh-Hant': '執行中', 'zh-Hans': '活动' },
+  idle: { en: 'Idle', es: 'Inactiva', 'zh-Hant': '閒置', 'zh-Hans': '空闲' },
 };
 
 export const TEXT = {
-  now: { en: 'now', es: 'ahora' },
-  meeting: { en: 'Meeting', es: 'Reunión' },
-  gitClean: { en: 'git clean', es: 'git limpio' },
-  gitDirty: { en: 'git {n} uncommitted', es: 'git {n} sin commit' },
-  more: { en: '+{n} more', es: '+{n} más' },
-  consoles: { en: '{n} consoles', es: '{n} consolas' },
-  console: { en: '1 console', es: '1 consola' },
-  waitingMany: { en: '{n} waiting for you', es: '{n} te esperan' },
-  waitingOne: { en: '1 waiting for you', es: '1 te espera' },
-  nobody: { en: 'nobody waiting', es: 'nadie espera' },
-  noSessions: { en: 'No agent sessions', es: 'Sin sesiones de agentes' },
+  now: { en: 'now', es: 'ahora', 'zh-Hant': '現在', 'zh-Hans': '现在' },
+  meeting: { en: 'Meeting', es: 'Reunión', 'zh-Hant': '會議', 'zh-Hans': '会议' },
+  gitClean: { en: 'git clean', es: 'git limpio', 'zh-Hant': 'git 無變更', 'zh-Hans': 'git 无改动' },
+  gitDirty: { en: 'git {n} uncommitted', es: 'git {n} sin commit', 'zh-Hant': 'git {n} 個未提交', 'zh-Hans': 'git {n} 个未提交' },
+  more: { en: '+{n} more', es: '+{n} más', 'zh-Hant': '還有 {n} 個', 'zh-Hans': '还有 {n} 个' },
+  consoles: { en: '{n} consoles', es: '{n} consolas', 'zh-Hant': '{n} 個終端機', 'zh-Hans': '{n} 个终端' },
+  console: { en: '1 console', es: '1 consola', 'zh-Hant': '1 個終端機', 'zh-Hans': '1 个终端' },
+  waitingMany: { en: '{n} waiting for you', es: '{n} te esperan', 'zh-Hant': '{n} 個在等你', 'zh-Hans': '{n} 个在等你' },
+  waitingOne: { en: '1 waiting for you', es: '1 te espera', 'zh-Hant': '1 個在等你', 'zh-Hans': '1 个在等你' },
+  nobody: { en: 'nobody waiting', es: 'nadie espera', 'zh-Hant': '沒有人在等', 'zh-Hans': '无人等待' },
+  noSessions: { en: 'No agent sessions', es: 'Sin sesiones de agentes', 'zh-Hant': '沒有代理工作階段', 'zh-Hans': '没有智能体会话' },
 } satisfies Record<string, Localized>;
 
 /** Replaces `{name}` placeholders. */
