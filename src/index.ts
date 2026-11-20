@@ -91,7 +91,7 @@ const sessionsOptions = t.object({
   projects: projectsField(),
   hideStates: t.list(t.enum(STATES, { labels: STATE_LABEL }), {
     label: { en: 'Hide sessions that are', es: 'Ocultar las sesiones en estado', 'zh-Hant': '隱藏下列狀態的工作階段', 'zh-Hans': '隐藏以下状态的会话' },
-    help: { en: 'E.g. Active and Idle, to see only the ones that claim you.', es: 'Por ejemplo, Activa e Inactiva, para ver sólo las que te reclaman.', 'zh-Hant': '例如「執行中」和「閒置」，只看需要你處理的。', 'zh-Hans': '例如“活动”和“空闲”，只看需要你处理的。' },
+    help: { en: 'E.g. Active and Idle, to see only the ones that claim you.', es: 'Por ejemplo, Activa e Inactiva, para ver sólo las que te reclaman.', 'zh-Hant': '例如「執行中」和「閒置」，只看需要你處理的。', 'zh-Hans': '例如“运行中”和“空闲”，只看需要你处理的。' },
   }),
   maxTiles: t.integer({
     default: 0,
@@ -101,7 +101,7 @@ const sessionsOptions = t.object({
     help: { en: '0 = as many as fit. The rest go to the summary column, so the tiles get wider.', es: '0 = las que quepan. El resto va a la columna de resumen, así que las casillas se ensanchan.', 'zh-Hant': '0 = 放得下多少就顯示多少。其餘的歸入摘要欄，方格因此變寬。', 'zh-Hans': '0 = 能放多少就显示多少。其余的归入摘要栏，格子因此变宽。' },
   }),
   tileMin: t.integer({ default: 320, min: 120, max: 1000, unit: 'px', label: { en: 'Narrowest tile', es: 'Casilla más estrecha', 'zh-Hant': '方格最小寬度', 'zh-Hans': '格子最小宽度' }, help: { en: 'At a 374 px tall widget; scales with the height. Sessions that would need narrower tiles go to the summary column.', es: 'Para un widget de 374 px de alto; escala con la altura. Las sesiones que no quepan van a la columna de resumen.', 'zh-Hant': '以 374 px 高的小工具為準，隨高度縮放。需要更窄方格的工作階段會歸入摘要欄。', 'zh-Hans': '以 374 px 高的小组件为准，随高度缩放。需要更窄格子的会话会归入摘要栏。' } }),
-  tileMax: t.integer({ default: 430, min: 0, max: 2000, unit: 'px', label: { en: 'Widest tile', es: 'Casilla más ancha', 'zh-Hant': '方格最大寬度', 'zh-Hans': '格子最大宽度' }, help: { en: 'So a single session doesn’t stretch across the panel. 0 = no limit: the tiles fill the width.', es: 'Para que una sola sesión no se estire a todo el panel. 0 = sin límite: las casillas llenan el ancho.', 'zh-Hant': '避免單一工作階段橫跨整個面板。0 = 不限制：方格填滿寬度。', 'zh-Hans': '避免单个会话横跨整个屏幕。0 = 不限制：格子占满宽度。' } }),
+  tileMax: t.integer({ default: 430, min: 0, max: 2000, unit: 'px', label: { en: 'Widest tile', es: 'Casilla más ancha', 'zh-Hant': '方格最大寬度', 'zh-Hans': '格子最大宽度' }, help: { en: 'So a single session doesn’t stretch across the panel. 0 = no limit: the tiles fill the width.', es: 'Para que una sola sesión no se estire a todo el panel. 0 = sin límite: las casillas llenan el ancho.', 'zh-Hant': '避免單一工作階段橫跨整個面板。0 = 不限制：方格填滿寬度。', 'zh-Hans': '避免单个会话横跨整个副屏。0 = 不限制：格子占满宽度。' } }),
   gap: t.integer({ default: 12, min: 0, max: 60, unit: 'px', label: { en: 'Gap between tiles', es: 'Separación entre casillas', 'zh-Hant': '方格間距', 'zh-Hans': '格子间距' } }),
   detailLines: t.integer({ default: 3, min: 0, max: 6, slider: true, label: { en: 'Detail lines', es: 'Líneas de detalle', 'zh-Hant': '詳細資訊行數', 'zh-Hans': '详情行数' }, help: { en: 'Lines of the last tool call or message before cutting with an ellipsis. 0 hides it.', es: 'Líneas de la última herramienta o mensaje antes de cortar con puntos suspensivos. 0 lo oculta.', 'zh-Hant': '最後一次工具呼叫或訊息顯示的行數，超出以刪節號截斷。0 表示隱藏。', 'zh-Hans': '最后一次工具调用或消息显示的行数，超出部分以省略号截断。0 表示隐藏。' } }),
   spineWidth: t.integer({ default: 7, min: 2, max: 30, unit: 'px', advanced: true, label: { en: 'Colour spine width', es: 'Ancho de la espina de color', 'zh-Hant': '色條寬度', 'zh-Hans': '色条宽度' } }),

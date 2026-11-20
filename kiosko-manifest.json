@@ -167,7 +167,7 @@
                 "en": "E.g. Active and Idle, to see only the ones that claim you.",
                 "es": "Por ejemplo, Activa e Inactiva, para ver sólo las que te reclaman.",
                 "zh-Hant": "例如「執行中」和「閒置」，只看需要你處理的。",
-                "zh-Hans": "例如“活动”和“空闲”，只看需要你处理的。"
+                "zh-Hans": "例如“运行中”和“空闲”，只看需要你处理的。"
               }
             },
             "type": "array",
@@ -197,7 +197,7 @@
                     "en": "Active",
                     "es": "Activa",
                     "zh-Hant": "執行中",
-                    "zh-Hans": "活动"
+                    "zh-Hans": "运行中"
                   },
                   "idle": {
                     "en": "Idle",
@@ -277,7 +277,7 @@
                 "en": "So a single session doesn’t stretch across the panel. 0 = no limit: the tiles fill the width.",
                 "es": "Para que una sola sesión no se estire a todo el panel. 0 = sin límite: las casillas llenan el ancho.",
                 "zh-Hant": "避免單一工作階段橫跨整個面板。0 = 不限制：方格填滿寬度。",
-                "zh-Hans": "避免单个会话横跨整个屏幕。0 = 不限制：格子占满宽度。"
+                "zh-Hans": "避免单个会话横跨整个副屏。0 = 不限制：格子占满宽度。"
               },
               "unit": "px"
             },

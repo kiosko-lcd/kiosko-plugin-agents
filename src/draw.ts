@@ -8,11 +8,11 @@ import { STATE_PRIORITY, claims } from '@loksly/agent-sessions';
 import type { Graphics, Localized, RenderContext, ThemeColors } from '@kiosko/sdk';
 import { elapsed, gigabytes, shortId } from './format.ts';
 import { plan, usedWidth, type Tile } from './select.ts';
-import { STATE_LABEL, TEXT, fill } from './texts.ts';
+import { COUNT, STATE_LABEL, TEXT, fill } from './texts.ts';
 import { filterSessions, sessionsOf, type SessionState, type SessionView, type Weight } from './types.ts';
 
 type Kit = RenderContext<unknown, unknown>['kit'];
-type Ctx = Pick<RenderContext<unknown, unknown>, 'box' | 'theme' | 'kit' | 'now' | 't' | 'fmt' | 'sources'>;
+type Ctx = Pick<RenderContext<unknown, unknown>, 'box' | 'theme' | 'kit' | 'now' | 't' | 'plural' | 'fmt' | 'sources'>;
 
 /** Body height the original layout was measured at. */
 export const REF_H = 374;
@@ -266,7 +266,7 @@ interface Part {
  * the eye whether anything is up.
  */
 export function drawSummaryStrip(g: Graphics, ctx: Ctx, o: SummaryOptions): void {
-  const { box, kit, theme, now, t, fmt, sources } = ctx;
+  const { box, kit, theme, now, t, plural, fmt, sources } = ctx;
   const c = theme.colors;
   const f = theme.fonts;
   const sessions = filterSessions(sessionsOf(sources), o);
@@ -288,10 +288,10 @@ export function drawSummaryStrip(g: Graphics, ctx: Ctx, o: SummaryOptions): void
     parts.push({ text: `RAM: ${gigabytes(mem.used)}/${gigabytes(mem.total)}`, color: c.ink, keep: 0 });
   }
   const n = sessions.length;
-  if (o.showConsoles) parts.push({ text: n === 1 ? t(TEXT.console) : fill(t(TEXT.consoles), { n }), color: c.inkDim, keep: 1 });
+  if (o.showConsoles) parts.push({ text: plural(n, COUNT.consoles), color: c.inkDim, keep: 1 });
   const waiting = sessions.filter(claims);
   const urgent = [...waiting].sort((a, b) => STATE_PRIORITY[b.state] - STATE_PRIORITY[a.state])[0];
-  const waitText = waiting.length === 0 ? t(TEXT.nobody) : waiting.length === 1 ? t(TEXT.waitingOne) : fill(t(TEXT.waitingMany), { n: waiting.length });
+  const waitText = waiting.length === 0 ? t(TEXT.nobody) : plural(waiting.length, COUNT.waiting);
   parts.push({ text: waitText, color: urgent ? stateColor(urgent.state, c) : c.inkFaint, keep: 2 });
 
   const dot = ' · ';
