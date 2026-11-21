@@ -9,13 +9,13 @@
     "zh-Hans": "AI 智能体",
     "de": "KI-Agenten"
   },
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": {
-    "en": "Claude Code and Gemini CLI sessions at a glance: who waits for you, for how long, and git status. Ported from aimonitor.",
-    "es": "Las sesiones de Claude Code y Gemini CLI de un vistazo: quién te espera, desde cuándo y el estado de git. Portado de aimonitor.",
-    "zh-Hant": "一眼看清 Claude Code 與 Gemini CLI 工作階段：誰在等你、等了多久，以及 git 狀態。移植自 aimonitor。",
-    "zh-Hans": "一眼看清 Claude Code 和 Gemini CLI 会话：谁在等你、等了多久，以及 git 状态。移植自 aimonitor。",
-    "de": "Sitzungen von Claude Code und Gemini CLI auf einen Blick: wer auf dich wartet, wie lange, und der Git-Status. Portiert von aimonitor."
+    "en": "Your AI coding agents at a glance (Claude Code, Gemini CLI, Qwen Code, Codex CLI, OpenCode, Kimi CLI, iFlow CLI…, also with local models): who waits for you, for how long, and git status. Ported from aimonitor.",
+    "es": "Tus agentes de programación con IA de un vistazo (Claude Code, Gemini CLI, Qwen Code, Codex CLI, OpenCode, Kimi CLI, iFlow CLI…, también con modelos locales): quién te espera, desde cuándo y el estado de git. Portado de aimonitor.",
+    "zh-Hant": "一眼看清你的 AI 程式設計代理（Claude Code、Gemini CLI、Qwen Code、Codex CLI、OpenCode、Kimi CLI、iFlow CLI…，也支援本機模型）：誰在等你、等了多久，以及 git 狀態。移植自 aimonitor。",
+    "zh-Hans": "一眼看清你的 AI 编程智能体（Claude Code、Gemini CLI、Qwen Code、Codex CLI、OpenCode、Kimi CLI、iFlow CLI…，也支持本地模型）：谁在等你、等了多久，以及 git 状态。移植自 aimonitor。",
+    "de": "Deine KI-Coding-Agenten auf einen Blick (Claude Code, Gemini CLI, Qwen Code, Codex CLI, OpenCode, Kimi CLI, iFlow CLI…, auch mit lokalen Modellen): wer auf dich wartet, wie lange, und der Git-Status. Portiert von aimonitor."
   },
   "author": "Kiosko",
   "license": "MIT",
@@ -41,6 +41,10 @@
   "tags": [
     "claude",
     "gemini",
+    "qwen",
+    "codex",
+    "opencode",
+    "kimi",
     "ai",
     "sessions",
     "git",
@@ -48,7 +52,12 @@
   ],
   "permissions": {
     "files": [
-      "~/.aimonitor/sessions"
+      "~/.aimonitor/sessions",
+      "~/.codex/sessions",
+      "~/.qwen/projects",
+      "~/.kimi/sessions",
+      "~/.kimi/kimi.json",
+      "~/.config/kiosko/agents"
     ],
     "exec": [
       "git"
@@ -57,6 +66,34 @@
   "riskyOptions": [
     {
       "path": "agents/sessions: dir",
+      "risk": [
+        "path"
+      ],
+      "secret": false
+    },
+    {
+      "path": "agents/sessions: codexDir",
+      "risk": [
+        "path"
+      ],
+      "secret": false
+    },
+    {
+      "path": "agents/sessions: qwenDir",
+      "risk": [
+        "path"
+      ],
+      "secret": false
+    },
+    {
+      "path": "agents/sessions: kimiDir",
+      "risk": [
+        "path"
+      ],
+      "secret": false
+    },
+    {
+      "path": "agents/sessions: statusDir",
       "risk": [
         "path"
       ],
@@ -92,6 +129,10 @@
       "tags": [
         "claude",
         "gemini",
+        "qwen",
+        "codex",
+        "opencode",
+        "kimi",
         "ai",
         "sessions",
         "git"
@@ -488,6 +529,8 @@
       "tags": [
         "claude",
         "gemini",
+        "qwen",
+        "codex",
         "header"
       ],
       "size": {
@@ -637,11 +680,11 @@
         "de": "KI-Agenten-Sitzungen"
       },
       "description": {
-        "en": "Claude Code, Gemini CLI… sessions as written by the agent-sessions hook, with git status.",
-        "es": "Las sesiones de Claude Code, Gemini CLI… que escribe el hook de agent-sessions, con el estado de git.",
-        "zh-Hant": "由 agent-sessions hook 寫入的 Claude Code、Gemini CLI… 工作階段，附 git 狀態。",
-        "zh-Hans": "由 agent-sessions hook 写入的 Claude Code、Gemini CLI… 会话，附带 git 状态。",
-        "de": "Sitzungen von Claude Code, Gemini CLI… so, wie der agent-sessions-Hook sie schreibt, mit Git-Status."
+        "en": "Sessions of Claude Code, Gemini CLI, Qwen Code, Codex CLI, Kimi CLI… from the agent-sessions hook, from the agents’ own logs and from status files, with git status.",
+        "es": "Las sesiones de Claude Code, Gemini CLI, Qwen Code, Codex CLI, Kimi CLI… del hook de agent-sessions, de los propios registros de cada agente y de ficheros de estado, con el estado de git.",
+        "zh-Hant": "Claude Code、Gemini CLI、Qwen Code、Codex CLI、Kimi CLI… 的工作階段，來自 agent-sessions hook、各代理自己的紀錄檔與狀態檔，附 git 狀態。",
+        "zh-Hans": "Claude Code、Gemini CLI、Qwen Code、Codex CLI、Kimi CLI… 的会话，来自 agent-sessions hook、各智能体自己的日志和状态文件，附带 git 状态。",
+        "de": "Sitzungen von Claude Code, Gemini CLI, Qwen Code, Codex CLI, Kimi CLI… aus dem agent-sessions-Hook, aus den eigenen Protokollen der Agenten und aus Statusdateien, mit Git-Status."
       },
       "polled": false,
       "options": {
@@ -652,7 +695,17 @@
           "staleMs": 7200000,
           "reap": true,
           "debounceMs": 200,
-          "pollMs": 30000
+          "pollMs": 30000,
+          "codex": true,
+          "codexDir": "",
+          "qwen": true,
+          "qwenDir": "",
+          "kimi": true,
+          "kimiDir": "",
+          "statusFiles": true,
+          "statusDir": "",
+          "fileStaleMs": 1800000,
+          "filePollMs": 3000
         },
         "x-ui": {},
         "type": "object",
@@ -816,6 +869,237 @@
             },
             "type": "integer",
             "minimum": 5000
+          },
+          "codex": {
+            "title": "Read Codex CLI sessions",
+            "description": "From its own logs in ~/.codex/sessions, if that folder exists; no hook needed. Working and done only: for permission prompts, add the hook (see the README).",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Read Codex CLI sessions",
+                "es": "Leer las sesiones de Codex CLI",
+                "zh-Hant": "讀取 Codex CLI 工作階段",
+                "zh-Hans": "读取 Codex CLI 会话",
+                "de": "Codex-CLI-Sitzungen lesen"
+              },
+              "help": {
+                "en": "From its own logs in ~/.codex/sessions, if that folder exists; no hook needed. Working and done only: for permission prompts, add the hook (see the README).",
+                "es": "De sus propios registros en ~/.codex/sessions, si existe esa carpeta; no hace falta hook. Sólo trabajando y terminada: para las peticiones de permiso, añade el hook (mira el README).",
+                "zh-Hant": "從它自己在 ~/.codex/sessions 的紀錄讀取（若該資料夾存在），不需要 hook。只能分辨執行中與已完成；若要看到權限請求，請加上 hook（見 README）。",
+                "zh-Hans": "从它自己在 ~/.codex/sessions 的日志读取（如果该文件夹存在），不需要 hook。只能区分运行中和已完成；如需看到权限请求，请加上 hook（见 README）。",
+                "de": "Aus den eigenen Protokollen in ~/.codex/sessions, falls der Ordner existiert; kein Hook nötig. Nur arbeitet und fertig: für Berechtigungsabfragen den Hook einrichten (siehe README)."
+              }
+            },
+            "type": "boolean"
+          },
+          "codexDir": {
+            "title": "Codex folder",
+            "description": "Empty: $CODEX_HOME or ~/.codex.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Codex folder",
+                "es": "Carpeta de Codex",
+                "zh-Hant": "Codex 資料夾",
+                "zh-Hans": "Codex 文件夹",
+                "de": "Codex-Ordner"
+              },
+              "help": {
+                "en": "Empty: $CODEX_HOME or ~/.codex.",
+                "es": "Vacío: $CODEX_HOME o ~/.codex.",
+                "zh-Hant": "留空：$CODEX_HOME 或 ~/.codex。",
+                "zh-Hans": "留空：$CODEX_HOME 或 ~/.codex。",
+                "de": "Leer: $CODEX_HOME oder ~/.codex."
+              },
+              "advanced": true,
+              "format": "path"
+            },
+            "x-risk": "path",
+            "type": "string"
+          },
+          "qwen": {
+            "title": "Read Qwen Code sessions",
+            "description": "From its own chat logs in ~/.qwen/projects, if that folder exists; no hook needed. Working and done only: for permission prompts, add the hook (see the README).",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Read Qwen Code sessions",
+                "es": "Leer las sesiones de Qwen Code",
+                "zh-Hant": "讀取 Qwen Code 工作階段",
+                "zh-Hans": "读取 Qwen Code 会话",
+                "de": "Qwen-Code-Sitzungen lesen"
+              },
+              "help": {
+                "en": "From its own chat logs in ~/.qwen/projects, if that folder exists; no hook needed. Working and done only: for permission prompts, add the hook (see the README).",
+                "es": "De sus propios registros de chat en ~/.qwen/projects, si existe esa carpeta; no hace falta hook. Sólo trabajando y terminada: para las peticiones de permiso, añade el hook (mira el README).",
+                "zh-Hant": "從它自己在 ~/.qwen/projects 的對話紀錄讀取（若該資料夾存在），不需要 hook。只能分辨執行中與已完成；若要看到權限請求，請加上 hook（見 README）。",
+                "zh-Hans": "从它自己在 ~/.qwen/projects 的对话日志读取（如果该文件夹存在），不需要 hook。只能区分运行中和已完成；如需看到权限请求，请加上 hook（见 README）。",
+                "de": "Aus den eigenen Chatprotokollen in ~/.qwen/projects, falls der Ordner existiert; kein Hook nötig. Nur arbeitet und fertig: für Berechtigungsabfragen den Hook einrichten (siehe README)."
+              }
+            },
+            "type": "boolean"
+          },
+          "qwenDir": {
+            "title": "Qwen Code folder",
+            "description": "Empty: $QWEN_RUNTIME_DIR or ~/.qwen.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Qwen Code folder",
+                "es": "Carpeta de Qwen Code",
+                "zh-Hant": "Qwen Code 資料夾",
+                "zh-Hans": "Qwen Code 文件夹",
+                "de": "Qwen-Code-Ordner"
+              },
+              "help": {
+                "en": "Empty: $QWEN_RUNTIME_DIR or ~/.qwen.",
+                "es": "Vacío: $QWEN_RUNTIME_DIR o ~/.qwen.",
+                "zh-Hant": "留空：$QWEN_RUNTIME_DIR 或 ~/.qwen。",
+                "zh-Hans": "留空：$QWEN_RUNTIME_DIR 或 ~/.qwen。",
+                "de": "Leer: $QWEN_RUNTIME_DIR oder ~/.qwen."
+              },
+              "advanced": true,
+              "format": "path"
+            },
+            "x-risk": "path",
+            "type": "string"
+          },
+          "kimi": {
+            "title": "Read Kimi CLI sessions",
+            "description": "From its own logs in ~/.kimi/sessions, if that folder exists; no hook needed. In the interactive shell permission prompts are not logged: add the hook for those (see the README).",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Read Kimi CLI sessions",
+                "es": "Leer las sesiones de Kimi CLI",
+                "zh-Hant": "讀取 Kimi CLI 工作階段",
+                "zh-Hans": "读取 Kimi CLI 会话",
+                "de": "Kimi-CLI-Sitzungen lesen"
+              },
+              "help": {
+                "en": "From its own logs in ~/.kimi/sessions, if that folder exists; no hook needed. In the interactive shell permission prompts are not logged: add the hook for those (see the README).",
+                "es": "De sus propios registros en ~/.kimi/sessions, si existe esa carpeta; no hace falta hook. En la consola interactiva las peticiones de permiso no se registran: para ésas, añade el hook (mira el README).",
+                "zh-Hant": "從它自己在 ~/.kimi/sessions 的紀錄讀取（若該資料夾存在），不需要 hook。互動式終端機不會記錄權限請求；若要看到，請加上 hook（見 README）。",
+                "zh-Hans": "从它自己在 ~/.kimi/sessions 的日志读取（如果该文件夹存在），不需要 hook。交互式终端不会记录权限请求；如需看到，请加上 hook（见 README）。",
+                "de": "Aus den eigenen Protokollen in ~/.kimi/sessions, falls der Ordner existiert; kein Hook nötig. In der interaktiven Shell werden Berechtigungsabfragen nicht protokolliert: dafür den Hook einrichten (siehe README)."
+              }
+            },
+            "type": "boolean"
+          },
+          "kimiDir": {
+            "title": "Kimi folder",
+            "description": "Empty: $KIMI_SHARE_DIR or ~/.kimi.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Kimi folder",
+                "es": "Carpeta de Kimi",
+                "zh-Hant": "Kimi 資料夾",
+                "zh-Hans": "Kimi 文件夹",
+                "de": "Kimi-Ordner"
+              },
+              "help": {
+                "en": "Empty: $KIMI_SHARE_DIR or ~/.kimi.",
+                "es": "Vacío: $KIMI_SHARE_DIR o ~/.kimi.",
+                "zh-Hant": "留空：$KIMI_SHARE_DIR 或 ~/.kimi。",
+                "zh-Hans": "留空：$KIMI_SHARE_DIR 或 ~/.kimi。",
+                "de": "Leer: $KIMI_SHARE_DIR oder ~/.kimi."
+              },
+              "advanced": true,
+              "format": "path"
+            },
+            "x-risk": "path",
+            "type": "string"
+          },
+          "statusFiles": {
+            "title": "Read status files",
+            "description": "Tiny JSON files that any agent’s hooks or your own scripts write, one per session, in ~/.config/kiosko/agents (OpenCode’s plugin, for one). See the README for the format.",
+            "default": true,
+            "x-ui": {
+              "label": {
+                "en": "Read status files",
+                "es": "Leer ficheros de estado",
+                "zh-Hant": "讀取狀態檔",
+                "zh-Hans": "读取状态文件",
+                "de": "Statusdateien lesen"
+              },
+              "help": {
+                "en": "Tiny JSON files that any agent’s hooks or your own scripts write, one per session, in ~/.config/kiosko/agents (OpenCode’s plugin, for one). See the README for the format.",
+                "es": "Ficheros JSON diminutos que escriben los hooks de cualquier agente o tus propios scripts, uno por sesión, en ~/.config/kiosko/agents (el plugin de OpenCode, por ejemplo). El formato está en el README.",
+                "zh-Hant": "任何代理的 hook 或你自己的腳本寫入的小型 JSON 檔，每個工作階段一個，放在 ~/.config/kiosko/agents（例如 OpenCode 的外掛）。格式見 README。",
+                "zh-Hans": "任何智能体的 hook 或你自己的脚本写入的小型 JSON 文件，每个会话一个，放在 ~/.config/kiosko/agents（例如 OpenCode 的插件）。格式见 README。",
+                "de": "Winzige JSON-Dateien, die die Hooks eines beliebigen Agenten oder deine eigenen Skripte schreiben, eine pro Sitzung, in ~/.config/kiosko/agents (zum Beispiel das OpenCode-Plugin). Das Format steht im README."
+              }
+            },
+            "type": "boolean"
+          },
+          "statusDir": {
+            "title": "Status files folder",
+            "description": "Empty: $KIOSKO_AGENTS_STATUS_DIR or ~/.config/kiosko/agents.",
+            "default": "",
+            "x-ui": {
+              "label": {
+                "en": "Status files folder",
+                "es": "Carpeta de ficheros de estado",
+                "zh-Hant": "狀態檔資料夾",
+                "zh-Hans": "状态文件文件夹",
+                "de": "Ordner der Statusdateien"
+              },
+              "help": {
+                "en": "Empty: $KIOSKO_AGENTS_STATUS_DIR or ~/.config/kiosko/agents.",
+                "es": "Vacío: $KIOSKO_AGENTS_STATUS_DIR o ~/.config/kiosko/agents.",
+                "zh-Hant": "留空：$KIOSKO_AGENTS_STATUS_DIR 或 ~/.config/kiosko/agents。",
+                "zh-Hans": "留空：$KIOSKO_AGENTS_STATUS_DIR 或 ~/.config/kiosko/agents。",
+                "de": "Leer: $KIOSKO_AGENTS_STATUS_DIR oder ~/.config/kiosko/agents."
+              },
+              "advanced": true,
+              "format": "path"
+            },
+            "x-risk": "path",
+            "type": "string"
+          },
+          "fileStaleMs": {
+            "title": "Forget a quiet log after",
+            "description": "An agent read from its own log can’t say you closed it: a finished session stays this long.",
+            "default": 1800000,
+            "x-ui": {
+              "label": {
+                "en": "Forget a quiet log after",
+                "es": "Olvidar un registro callado tras",
+                "zh-Hant": "紀錄無動靜多久後忽略",
+                "zh-Hans": "日志无动静多久后忽略",
+                "de": "Stilles Protokoll vergessen nach"
+              },
+              "help": {
+                "en": "An agent read from its own log can’t say you closed it: a finished session stays this long.",
+                "es": "Un agente leído de su registro no puede decir que lo has cerrado: una sesión terminada se queda este tiempo.",
+                "zh-Hant": "從紀錄讀取的代理無法得知你已關閉它：已完成的工作階段會保留這麼久。",
+                "zh-Hans": "从日志读取的智能体无法得知你已关闭它：已完成的会话会保留这么久。",
+                "de": "Ein aus seinem Protokoll gelesener Agent kann nicht sagen, dass du ihn geschlossen hast: Eine fertige Sitzung bleibt so lange."
+              },
+              "advanced": true,
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 60000
+          },
+          "filePollMs": {
+            "title": "Look at the agents’ logs every",
+            "default": 3000,
+            "x-ui": {
+              "label": {
+                "en": "Look at the agents’ logs every",
+                "es": "Mirar los registros de los agentes cada",
+                "zh-Hant": "查看代理紀錄的間隔",
+                "zh-Hans": "查看智能体日志的间隔",
+                "de": "Protokolle der Agenten prüfen alle"
+              },
+              "advanced": true,
+              "unit": "ms"
+            },
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 60000
           }
         }
       }
