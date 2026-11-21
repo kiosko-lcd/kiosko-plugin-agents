@@ -37,7 +37,16 @@ function rec(spec: Spec, now: number): SessionView {
   };
 }
 
-export type ScenarioName = 'empty' | 'one' | 'two' | 'threeClaim' | 'quiet' | 'longNames' | 'overflow' | 'meeting';
+export type ScenarioName = 'empty' | 'one' | 'two' | 'threeClaim' | 'quiet' | 'longNames' | 'overflow' | 'meeting' | 'china' | 'local';
+
+/**
+ * The scenario a demo shows in a language. Simplified Chinese is read in
+ * mainland China, where Claude and Gemini are not offered: its demo shows
+ * the agents available there instead.
+ */
+export function demoScenario(locale: string): ScenarioName {
+  return /^zh-(hans|cn|sg)\b/i.test(locale) || /^zh$/i.test(locale) ? 'china' : 'threeClaim';
+}
 
 /** `threeClaim` is the one that matters: it's the case the three weights exist for. */
 export function scenario(name: ScenarioName, now: number): SessionView[] {
@@ -56,8 +65,21 @@ export function scenario(name: ScenarioName, now: number): SessionView[] {
       return [
         r({ id: 'a1b2c3d4-1111', project: 'infra', state: 'permission', detail: 'Bash: sudo systemctl restart nginx --no-block', ago: min(3) + s(41), dirty: 2 }),
         r({ id: 'b2c3d4e5-2222', project: 'web-app', state: 'waiting', detail: 'Waiting for your input', ago: min(18) + s(7), dirty: 11, provider: 'gemini' }),
-        r({ id: 'c3d4e5f6-3333', project: 'api-gateway', state: 'ready', detail: 'Stop', ago: min(1) + s(4), dirty: 0, provider: 'gemini' }),
-        r({ id: 'd4e5f6a7-4444', project: 'docs-site', state: 'active', detail: 'Grep "createServer"', ago: s(9), dirty: 1 }),
+        r({ id: 'c3d4e5f6-3333', project: 'api-gateway', state: 'ready', detail: 'Tests pass; the retry backoff is capped at 30 s now.', ago: min(1) + s(4), dirty: 0, provider: 'codex' }),
+        r({ id: 'd4e5f6a7-4444', project: 'docs-site', state: 'active', detail: 'grep_search: createServer', ago: s(9), dirty: 1, provider: 'qwen' }),
+      ];
+    case 'china':
+      return [
+        r({ id: 'a1b2c3d4-1111', project: 'infra', state: 'permission', detail: 'run_shell_command: sudo systemctl restart nginx', ago: min(3) + s(41), dirty: 2, provider: 'qwen' }),
+        r({ id: 'b2c3d4e5-2222', project: 'web-app', state: 'waiting', detail: '要把旧接口一起删掉吗？', ago: min(18) + s(7), dirty: 11, provider: 'kimi' }),
+        r({ id: 'c3d4e5f6-3333', project: 'api-gateway', state: 'ready', detail: '测试全部通过，重试间隔上限改为 30 秒。', ago: min(1) + s(4), dirty: 0, provider: 'iflow' }),
+        r({ id: 'd4e5f6a7-4444', project: 'docs-site', state: 'active', detail: 'read_file: docs/部署.md', ago: s(9), dirty: 1, provider: 'qwen' }),
+      ];
+    case 'local':
+      return [
+        r({ id: 'a1b2c3d4-1111', project: 'web-app', state: 'permission', detail: 'bash: npm publish', ago: min(2) + s(18), dirty: 3, provider: 'opencode' }),
+        r({ id: 'b2c3d4e5-2222', project: 'api-gateway', state: 'ready', detail: 'Done: the handler now streams the CSV.', ago: min(6), dirty: 4, provider: 'codex' }),
+        r({ id: 'c3d4e5f6-3333', project: 'notes', state: 'active', detail: 'exec_command: ollama run qwen3-coder', ago: s(33), dirty: 0, provider: 'codex' }),
       ];
     case 'quiet':
       return [
