@@ -1,3 +1,4 @@
+import { join as pathJoin } from 'node:path';
 /**
  * The passive readers against fixtures built from each agent's documented
  * format (see the comment at the top of each reader for the sources).
@@ -257,11 +258,13 @@ test('loadSessions: a session the hook reports wins over the same one read from 
 });
 
 test('passiveRoot: option, then the agent’s own variable, then its default', () => {
-  assert.equal(passiveRoot('codex', '', {}, '/h'), '/h/.codex');
+  // Paths with this system's separator (Windows: \h\.codex).
+  const p = (...parts: string[]) => pathJoin('/h', ...parts);
+  assert.equal(passiveRoot('codex', '', {}, '/h'), p('.codex'));
   assert.equal(passiveRoot('codex', '', { CODEX_HOME: '/srv/codex' }, '/h'), '/srv/codex');
-  assert.equal(passiveRoot('qwen', '~/q', { QWEN_RUNTIME_DIR: '/x' }, '/h'), '/h/q');
+  assert.equal(passiveRoot('qwen', '~/q', { QWEN_RUNTIME_DIR: '/x' }, '/h'), p('q'));
   assert.equal(passiveRoot('kimi', '', { KIMI_SHARE_DIR: '/k' }, '/h'), '/k');
-  assert.equal(passiveRoot('status', '', {}, '/h'), '/h/.config/kiosko/agents');
+  assert.equal(passiveRoot('status', '', {}, '/h'), p('.config', 'kiosko', 'agents'));
 });
 
 test('the OpenCode plugin in docs/hooks writes status files the reader understands', async () => {
