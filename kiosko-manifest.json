@@ -9,7 +9,7 @@
     "zh-Hans": "AI 智能体",
     "de": "KI-Agenten"
   },
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": {
     "en": "Claude Code and Gemini CLI sessions at a glance: who waits for you, for how long, and git status. Ported from aimonitor.",
     "es": "Las sesiones de Claude Code y Gemini CLI de un vistazo: quién te espera, desde cuándo y el estado de git. Portado de aimonitor.",
@@ -858,7 +858,16 @@
         "agents/sessions",
         "vitals/vitals",
         "usage/rail"
+      ],
+      "layouts": [
+        "wide",
+        "square",
+        "tall"
       ]
     }
-  ]
+  ],
+  "support": {
+    "issues": "https://github.com/kiosko-lcd/kiosko-plugin-agents/issues",
+    "docs": "https://github.com/kiosko-lcd/kiosko-plugin-agents#readme"
+  }
 }
