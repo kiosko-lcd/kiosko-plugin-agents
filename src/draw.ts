@@ -7,6 +7,7 @@
 import { STATE_PRIORITY, claims } from '@loksly/agent-sessions';
 import type { Graphics, Localized, RenderContext, ThemeColors } from '@kiosko/sdk';
 import { elapsed, gigabytes, shortId } from './format.ts';
+import { providerName } from './names.ts';
 import { plan, usedWidth, type Tile } from './select.ts';
 import { COUNT, STATE_LABEL, TEXT, fill } from './texts.ts';
 import { filterSessions, sessionsOf, type SessionState, type SessionView, type Weight } from './types.ts';
@@ -115,7 +116,7 @@ export function drawTile(g: Graphics, ctx: Ctx, tile: Tile, x: number, y: number
   const label = kit.truncate(g, t(meeting ? TEXT.meeting : STATE_LABEL[r.state]), cw, labelOpts);
   const labelW = kit.drawTracked(g, label, cx, y + 32 * s, labelOpts);
   const idOpts = { size: Math.max(10, Math.round(15 * fs)), family: f.mono, color: ink.faint, align: 'right' as const };
-  const ids = meeting ? [fmt.time(r.startsAt!)] : st.showId ? [`${String(r.provider).toUpperCase()} · ${shortId(r.session_id)}`, shortId(r.session_id)] : [];
+  const ids = meeting ? [fmt.time(r.startsAt!)] : st.showId ? [`${providerName(String(r.provider)).toUpperCase()} · ${shortId(r.session_id)}`, shortId(r.session_id)] : [];
   const id = ids.find((txt) => kit.measureTracked(g, txt, idOpts) <= cw - labelW - 12 * fs);
   if (id) kit.drawTracked(g, id, x + w - pad, y + 31 * s, idOpts);
 
