@@ -174,7 +174,7 @@ export const summaryWidget = defineWidget({
 
 export const runner = defineInterlude({
   id: 'runner',
-  name: { en: '8-bit runner', es: 'Corredor de 8 bits', 'zh-Hant': '8 位元跑者', 'zh-Hans': '8 位跑者', de: '8-Bit-Läufer' },
+  name: { en: '8-bit runner', es: 'Corredor de 8 bits', 'zh-Hant': '8 位元跑者', 'zh-Hans': '8 比特跑者', de: '8-Bit-Läufer' },
   description: {
     en: 'A side-scrolling platformer run through a server room, in flat colours. Every slot plays a different ending; now and then the runner ships the release.',
     es: 'Una carrera de plataformas de scroll lateral por una sala de servidores, en colores planos. Cada franja acaba distinto; de vez en cuando el corredor saca la versión.',
