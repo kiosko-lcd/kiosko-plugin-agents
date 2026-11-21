@@ -18,7 +18,9 @@ npm install --prefix ~/.config/kiosko/plugins kiosko-plugin-agents
 
 ## Requirements
 
-- A hook that writes agent session files. With Claude Code, add `agent-sessions-hook` (from [`@loksly/agent-sessions`](https://github.com/kiosko-lcd/kiosko/tree/main/packages/agent-sessions)) to your `settings.json` hooks; sessions land in `~/.aimonitor/sessions` by default.
+- Codex CLI, Qwen Code and Kimi CLI sessions are read from their own folders with nothing to set up (working, done, waiting for an answer); to see when they wait for your permission, add their hook (see *Agents* below).
+- Claude Code and Gemini CLI: add `agent-sessions-hook` (from [`@loksly/agent-sessions`](https://github.com/kiosko-lcd/kiosko/tree/main/packages/agent-sessions)) to their hooks (`--provider gemini` for Gemini); sessions land in `~/.aimonitor/sessions` by default.
+- OpenCode, iFlow CLI or anything else: a small hook that writes status files to `~/.config/kiosko/agents` (ready-to-paste snippets below).
 
 ## What it does on your machine
 
