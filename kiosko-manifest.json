@@ -704,7 +704,7 @@
           "kimiDir": "",
           "statusFiles": true,
           "statusDir": "",
-          "fileStaleMs": 1800000,
+          "fileStaleMs": 900000,
           "filePollMs": 3000
         },
         "x-ui": {},
@@ -1061,7 +1061,7 @@
           "fileStaleMs": {
             "title": "Forget a quiet log after",
             "description": "An agent read from its own log can’t say you closed it: a finished session stays this long.",
-            "default": 1800000,
+            "default": 900000,
             "x-ui": {
               "label": {
                 "en": "Forget a quiet log after",

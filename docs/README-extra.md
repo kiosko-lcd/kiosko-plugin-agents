@@ -19,7 +19,7 @@ same session, the hook wins.
 
 Every reader can be turned off in Kiosko → Settings → Data sources → *AI agent sessions*; one whose
 folder doesn't exist reads nothing. Nothing outside those folders is opened, nothing is written to them,
-and only logs written in the last 30 minutes (*Forget a quiet log after*) are read, a few kilobytes from
+and only logs written in the last 15 minutes (*Forget a quiet log after*) are read, a few kilobytes from
 their end. A session read from its log can't say you closed the agent: a finished one stays until then
 (Qwen Code also leaves a `.runtime.json` with its PID, so a closed Qwen session goes away at once).
 
