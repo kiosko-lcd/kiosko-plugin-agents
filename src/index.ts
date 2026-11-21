@@ -115,7 +115,7 @@ export const sessionsSource = defineSource({
     }),
     statusDir: t.string({ default: '', format: 'path', risk: 'path', advanced: true, label: { en: 'Status files folder', es: 'Carpeta de ficheros de estado', 'zh-Hant': '狀態檔資料夾', 'zh-Hans': '状态文件文件夹', de: 'Ordner der Statusdateien' }, help: { en: 'Empty: $KIOSKO_AGENTS_STATUS_DIR or ~/.config/kiosko/agents.', es: 'Vacío: $KIOSKO_AGENTS_STATUS_DIR o ~/.config/kiosko/agents.', 'zh-Hant': '留空：$KIOSKO_AGENTS_STATUS_DIR 或 ~/.config/kiosko/agents。', 'zh-Hans': '留空：$KIOSKO_AGENTS_STATUS_DIR 或 ~/.config/kiosko/agents。', de: 'Leer: $KIOSKO_AGENTS_STATUS_DIR oder ~/.config/kiosko/agents.' } }),
     fileStaleMs: t.duration({
-      default: 30 * 60_000,
+      default: 15 * 60_000,
       min: 60_000,
       advanced: true,
       label: { en: 'Forget a quiet log after', es: 'Olvidar un registro callado tras', 'zh-Hant': '紀錄無動靜多久後忽略', 'zh-Hans': '日志无动静多久后忽略', de: 'Stilles Protokoll vergessen nach' },

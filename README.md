@@ -18,7 +18,9 @@ npm install --prefix ~/.config/kiosko/plugins kiosko-plugin-agents
 
 ## Requirements
 
-- A hook that writes agent session files. With Claude Code, add `agent-sessions-hook` (from [`@loksly/agent-sessions`](https://github.com/kiosko-lcd/kiosko/tree/main/packages/agent-sessions)) to your `settings.json` hooks; sessions land in `~/.aimonitor/sessions` by default.
+- Codex CLI, Qwen Code and Kimi CLI sessions are read from their own folders with nothing to set up (working, done, waiting for an answer); to see when they wait for your permission, add their hook (see *Supported agents* below).
+- Claude Code and Gemini CLI: add `agent-sessions-hook` (from [`@loksly/agent-sessions`](https://github.com/kiosko-lcd/kiosko/tree/main/packages/agent-sessions)) to their hooks (`--provider gemini` for Gemini); sessions land in `~/.aimonitor/sessions` by default.
+- OpenCode, iFlow CLI or anything else: a small hook that writes status files to `~/.config/kiosko/agents` (ready-to-paste snippets below).
 
 ## What it does on your machine
 
@@ -91,7 +93,7 @@ Sessions of Claude Code, Gemini CLI, Qwen Code, Codex CLI, Kimi CLI… from the 
 | `kimiDir` | string | `""` | Kimi folder. Empty: $KIMI_SHARE_DIR or ~/.kimi. |
 | `statusFiles` | boolean | `true` | Read status files. Tiny JSON files that any agent’s hooks or your own scripts write, one per session, in ~/.config/kiosko/agents (OpenCode’s plugin, for one). See the README for the format. |
 | `statusDir` | string | `""` | Status files folder. Empty: $KIOSKO_AGENTS_STATUS_DIR or ~/.config/kiosko/agents. |
-| `fileStaleMs` | duration (ms) | `1800000` | Forget a quiet log after. An agent read from its own log can’t say you closed it: a finished session stays this long. |
+| `fileStaleMs` | duration (ms) | `900000` | Forget a quiet log after. An agent read from its own log can’t say you closed it: a finished session stays this long. |
 | `filePollMs` | duration (ms) | `3000` | Look at the agents’ logs every |
 
 ## Interludes
@@ -125,7 +127,7 @@ same session, the hook wins.
 
 Every reader can be turned off in Kiosko → Settings → Data sources → *AI agent sessions*; one whose
 folder doesn't exist reads nothing. Nothing outside those folders is opened, nothing is written to them,
-and only logs written in the last 30 minutes (*Forget a quiet log after*) are read, a few kilobytes from
+and only logs written in the last 15 minutes (*Forget a quiet log after*) are read, a few kilobytes from
 their end. A session read from its log can't say you closed the agent: a finished one stays until then
 (Qwen Code also leaves a `.runtime.json` with its PID, so a closed Qwen session goes away at once).
 
