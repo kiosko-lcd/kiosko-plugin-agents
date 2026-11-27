@@ -9,7 +9,7 @@
     "zh-Hans": "AI 智能体",
     "de": "KI-Agenten"
   },
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": {
     "en": "Your AI coding agents at a glance (Claude Code, Gemini CLI, Qwen Code, Codex CLI, OpenCode, Kimi CLI, iFlow CLI…, also with local models): who waits for you, for how long, and git status. Ported from aimonitor.",
     "es": "Tus agentes de programación con IA de un vistazo (Claude Code, Gemini CLI, Qwen Code, Codex CLI, OpenCode, Kimi CLI, iFlow CLI…, también con modelos locales): quién te espera, desde cuándo y el estado de git. Portado de aimonitor.",

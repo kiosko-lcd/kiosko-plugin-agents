@@ -62,6 +62,8 @@ test('sessions: the filter decides what is drawn, urgent, idle and empty', () =>
   assert.equal(sessionsWidget.urgent!(state(sessionsWidget, {}, all)), true, 'infra waits for a permission');
   assert.equal(sessionsWidget.urgent!(state(sessionsWidget, { projects: ['!infra'] }, all)), false, 'not this widget\'s business');
   assert.equal(sessionsWidget.empty!(state(sessionsWidget, { hideStates: ['permission', 'waiting', 'ready', 'active'] }, all)), true);
+  assert.equal(sessionsWidget.empty!(state(sessionsWidget, {}, all)), false, 'sessions to show');
+  assert.equal(sessionsWidget.empty!({ ...state(sessionsWidget, {}, all), sources: {} }), false, 'not read yet: loading, not empty');
   assert.equal(sessionsWidget.idle!(state(sessionsWidget, { projects: ['nothing-like-this'] }, all)), true);
   const none = recorder(sessionsWidget, { projects: ['nothing-like-this'] }, { locale: 'es' });
   sessionsWidget.render(none.g, none.ctx);

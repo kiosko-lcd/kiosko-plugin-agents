@@ -201,7 +201,7 @@ export const sessionsWidget = defineWidget({
   },
   urgent: ({ sources, options }) => needsPermission(filterSessions(sessionsOf(sources), options)),
   idle: ({ sources, options }) => filterSessions(sessionsOf(sources), options).length === 0,
-  empty: ({ sources, options }) => filterSessions(sessionsOf(sources), options).length === 0,
+  empty: ({ sources, options }) => sources[SESSIONS_SOURCE] !== undefined && filterSessions(sessionsOf(sources), options).length === 0,
   demo: ({ now, locale }) => ({ sources: { [SESSIONS_SOURCE]: { sessions: scenario(demoScenario(locale), now) } } }),
 });
 
@@ -271,7 +271,7 @@ export const runner = defineInterlude({
 export default definePlugin({
   id: 'agents',
   name: { en: 'AI agents', es: 'Agentes IA', 'zh-Hant': 'AI 代理', 'zh-Hans': 'AI 智能体', de: 'KI-Agenten' },
-  version: '0.3.0',
+  version: '0.3.1',
   languages: ['en', 'es', 'zh-Hant', 'zh-Hans', 'de'],
   sdk: '^0.2.0',
   permissions: { files: ['~/.aimonitor/sessions', '~/.codex/sessions', '~/.qwen/projects', '~/.kimi/sessions', '~/.kimi/kimi.json', '~/.config/kiosko/agents'], exec: ['git'] },
